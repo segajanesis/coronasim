@@ -73,8 +73,10 @@ function multiplyAndRound(numberInt, percentFloat) {
 		return null;
 	}
 	var result = (numberInt * 1.0) * ((percentFloat * 1.0) / 100.0);
-	debug("Result of multiply, numberInt: " + numberInt + ", percentFloat: " + percentFloat + ", result: " + result);
-	return Math.round(result);
+	var flooredResult = Math.floor(result);
+	debug("Result of multiply, numberInt: " + numberInt + ", percentFloat: " + percentFloat 
+		+ ", result: " + result + ", flooredResult: " + flooredResult);
+	return flooredResult;
 }
 
 function getPercentage(currentValueInt, maxValueInt) {
@@ -150,11 +152,16 @@ function populateTemplate(template, dayStats, totalStats, currentHospitalizedInt
 	templateCopy = templateCopy.replace("${day}", value);
 
 	value = "" + printNumberShort(dayStats.infectionsInt) + " new today.";
-	templateCopy = templateCopy.replace("${infections}", value);
+	templateCopy = templateCopy.replace("${infectionsToday}", value);
 
 	value = "" + printNumberShort(dayStats.testedInt) + " new today, ";
 	value += printNumberShort(dayStats.positiveTestsInt) + " tested positive.";
-	templateCopy = templateCopy.replace("${testResults}", value);
+	templateCopy = templateCopy.replace("${testResultsToday}", value);
+
+	value = "" + printNumberShort(dayStats.hospitalizationsInt) + " of today's infections will be hospitalized, ";
+	value += printNumberShort(dayStats.deathsInt) + " will die.";
+	templateCopy = templateCopy.replace("${mortalityToday}", value);
+
 
 	var bedsUsed = currentHospitalizedInt;
 	var bedsFree = coronaSimSettings.hospitalBedsInt - bedsUsed;
@@ -165,7 +172,7 @@ function populateTemplate(template, dayStats, totalStats, currentHospitalizedInt
 	if (bedsFree < 0) {
 		value = "<span style='color:red;'>" + value + "</span>";
 	}
-	templateCopy = templateCopy.replace("${hospitalBeds}", value);
+	templateCopy = templateCopy.replace("${hospitalBedsToday}", value);
 
 	value = "" + printNumberShort(totalStats.totalInfectionsInt) + " infected, ";
 	value += printNumberShort(totalStats.totalTestedInt) + " tested, ";
