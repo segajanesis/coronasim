@@ -3,8 +3,7 @@
  * need to tally deaths when hospital is overflowed
  * Add graph lib
  * Populate graph
- * Find example starter data, link to sources as much as possible
- * Need to source data: 
+ * Need to source data
 
 *FUTURE FEATURES*
 

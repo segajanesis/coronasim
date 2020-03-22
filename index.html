@@ -21,6 +21,7 @@
 		}
 		.jumbotron, .content { min-height:100%; max-width:1200px; margin-left:auto; 
 			margin-right:auto; padding-bottom:0; background-color:#ecf0f1; margin-bottom:0; }
+		.jumbotron { padding-bottom:0.5rem; }
 		H5 { font-weight:700; }
 		P { margin-left:0.5rem; margin-right:0.5rem; text-align:justify; }
 		A { color:#3498DB!important; }
@@ -48,6 +49,7 @@
 			/* Note: this is where all of the magic happens, this method makes a simulator, steps through the sim, and returns html output */
 			var tableHTML = generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings);
 			document.getElementById("simulationOutput").innerHTML = tableHTML;
+			window.scrollBy(0, 200);
 		}
 
 		document.addEventListener('DOMContentLoaded', function() {			
@@ -83,6 +85,8 @@
 				<p>With the default settings, this simulator shows that if we continue our alarming rate of cases growing day over day, we'll have an actively hospitalized number of patients of about 2 million people about one month from now. That's a big problem, because we have <a href="https://www.cdc.gov/nchs/data/hus/2017/089.pdf">one million hospital beds in the United States</a> - total.</p>
 
 				<p>The current death rate from the virus appears to be 4% if you look at <a href="https://coronavirus.jhu.edu/map.html">current case total</a> to death ratio, or 10% if you look at survival to death ratio. 4% of two million patients with corona dying would be 80,000 deaths, BUT, if one million people can't get into the hospital who need that ventilator to live, we might have 500,000 deaths or maybe even all 1,080,000, and as the simulator shows, it gets worse from there.</p>
+
+				<p>However, if we simply adjust our per-day growth rate down to 10% per day, we buy ourselves time. At a 10% infection growth rate, our hospital beds would not be exhausted until 3 months from now. If we <a href="https://www.npr.org/sections/health-shots/2020/03/17/817251610/its-time-to-get-serious-about-social-distancing-here-s-how">socially distance</a> ourselves, we will reduce the number of new cases and buy ourselves time.</p>
 
 				<p><strong>We MUST take quarantine seriously.</strong> Now is not the time to refute the news and discard this as 'just the flu'. It is not the common flu. Coronavirus has a death rate <a href="https://www.livescience.com/new-coronavirus-compare-with-flu.html">at least ten times higher than the common flu</a>, and, if we can't <a href="https://www.nytimes.com/2020/03/11/science/coronavirus-curve-mitigation-infection.html">flatten the curve</a> and control the number of people needing hospitalization, many people will die who don't need to.</p>
 
@@ -139,8 +143,6 @@
 				<div class="form-row">
 					<button class="btn btn-primary" onClick="runSimulation()">Run Simulation</button>
 				</div>
-
-				<hr />
 			</div>
 		</div>
 		<div class='simulationOutput' id='simulationOutput' />

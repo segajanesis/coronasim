@@ -12,14 +12,16 @@ The simulator uses static html, javascript, and bootstrap 4.x.
 
 ### Code Overview
 
-POJO style classes are in classes.js. The simulator's code is in simulator.js. And, and a lot of utility code + the guts of the page are in lib.js.
+POJO style classes are in [classes.js](classes.js). The simulator's code is in [simulator.js](simulator.js). And, and a lot of utility code + the guts of the page are in [lib.js](lib.js).
+
+Everything is driven by the browser opening [index.html](index.html), of course.
 
 ### Want to Contribute?
 
 Great. Please review the code. Please review my math. Please tell me I've made a serious error in the math and we're not as fucked as it seems.
 
-I'm also tracking tasks / ideas in the TODO.md file, if you're interested in how you might contribute.
+I'm also tracking tasks / ideas in the [TODO.md](TODO.md) file, if you're interested in how you might contribute.
 
 ### License
 
-Licensed with the Apache license, as described in the LICENSE file.
+Licensed with the Apache license, as described in the [LICENSE](LICENSE) file.
