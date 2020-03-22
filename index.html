@@ -30,7 +30,12 @@
 		IMG { max-width:100%; }
 		.section { margin-bottom:1rem; border-top:1px solid rgba(0,0,0,0.15); padding-top:1rem; }
 		.form-group { margin-top:1rem; margin-bottom:3rem; }
-		.form-group LABEL { margin-bottom:2rem; }		
+		.form-group LABEL { margin-bottom:2rem; }	
+		.simulationOutput .form-group { margin:0; margin-bottom:0.5rem; }
+		.simulationOutput .form-group LABEL { margin-bottom:0; }
+		LABEL.form-label { font-weight:700; }
+		LABEL.detail { display:block; font-style:italic; }	
+		.testResult { padding:0.25rem 1rem; border-left:1px solid rgba(0,0,0,0.15); border-top:1px solid rgba(0,0,0,0.15); margin-bottom:2rem; }
 	</style>
 
 	<script>	
@@ -209,8 +214,8 @@
 					<button type='submit' class="btn btn-primary">Run Simulation</button>
 				</div>
 			</form>
-		</div>
-		<div class='simulationOutput' id='simulationOutput' />
+			<div class='simulationOutput' id='simulationOutput' />
+		</div>		
 	</div>
 </body>
 </html>

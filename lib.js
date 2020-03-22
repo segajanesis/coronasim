@@ -7,7 +7,7 @@ var billion = million * 1000;
 var trillion = billion * 1000;
 
 function printDayShort(date) {
-	var result = months[date.getUTCMonth()] + " " + date.getUTCDate() + " '" + (date.getUTCFullYear() % 100);
+	var result = months[date.getUTCMonth()] + " " + date.getUTCDate() + " " + (date.getUTCFullYear());
 	debug("printDayShort: " + date + " -> " + result, null);
 	return result;
 }
@@ -142,36 +142,37 @@ function populateTemplate(template, dayStats, totalStats, currentHospitalizedInt
 	var templateCopy = template;
 
 	var rowDate = incrementDate(coronaSimSettings.initialDate, dayStats.dayNumberInt);
-	value = printDayShort(rowDate) + " (day no: " +  dayStats.dayNumberInt + ")";
-	templateCopy = templateCopy.replace("${day)", value);
+	value = "#" + dayStats.dayNumberInt + ": "  + printDayShort(rowDate);
+	console.log(templateCopy);
+	console.log("value:" + value);
+	templateCopy = templateCopy.replace("${day}", value);
 
 	value = "" + printNumberShort(totalStats.totalInfectionsInt) + " total, ";
-	percentage = " (" + getPercentage(dayStats.infectionsInt, totalStats.totalInfectionsInt) + ")";
+	percentage = " (" + getPercentage(dayStats.infectionsInt, totalStats.totalInfectionsInt) + "%)";
 	value += printNumberShort(dayStats.infectionsInt) + percentage + " new today.";
-	templateCopy = templateCopy.replace("${infections)", value);
+	templateCopy = templateCopy.replace("${infections}", value);
 
 	value = "" + printNumberShort(totalStats.totalTestedInt) + " total, ";
-	percentage = " (" + getPercentage(dayStats.testedInt, totalStats.totalTestedInt) + ")";
+	percentage = " (" + getPercentage(dayStats.testedInt, totalStats.totalTestedInt) + "%)";
 	value += printNumberShort(dayStats.testedInt) + percentage + " new today.";
-	templateCopy = templateCopy.replace("${testResults)", value);
+	templateCopy = templateCopy.replace("${testResults}", value);
 
 	var bedsUsed = currentHospitalizedInt;
 	var bedsFree = coronaSimSettings.hospitalBedsInt - bedsUsed;
-	percentage = " (" + getPercentage(bedsUsed, coronaSimSettings.hospitalBedsInt) + ")";		
+	percentage = " (" + getPercentage(bedsUsed, coronaSimSettings.hospitalBedsInt) + "%)";		
 	value = "" + printNumberShort(bedsUsed) + percentage + " used, ";
-	percentage = " (" + getPercentage(bedsFree, coronaSimSettings.hospitalBedsInt) + ")";
+	percentage = " (" + getPercentage(bedsFree, coronaSimSettings.hospitalBedsInt) + "%)";
 	value += printNumberShort(bedsFree) + percentage + " free.";
-	templateCopy = templateCopy.replace("${hospitalBeds)", value);
+	templateCopy = templateCopy.replace("${hospitalBeds}", value);
 
 	value = "" + printNumberShort(totalStats.totalInfectionsInt) + " infected, ";
 	var survivors = totalStats.totalInfectionsInt - totalStats.totalDeathsInt;
-	percentage = " (" + getPercentage(survivors, totalStats.totalInfectionsInt) + ")";
+	percentage = " (" + getPercentage(survivors, totalStats.totalInfectionsInt) + "%)";
 	value += printNumberShort(survivors) + percentage + " survivors, ";
-	percentage = " (" + getPercentage(totalStats.totalDeathsInt, totalStats.totalInfectionsInt) + ")";
+	percentage = " (" + getPercentage(totalStats.totalDeathsInt, totalStats.totalInfectionsInt) + "%)";
 	value += printNumberShort(totalStats.totalDeathsInt) + percentage + " deaths.";
-	templateCopy = templateCopy.replace("${totals)", value);
+	templateCopy = templateCopy.replace("${totals}", value);
 
-	console.log(templateCopy);
 	return templateCopy;
 }
 
