@@ -1,0 +1,340 @@
+<html>
+<head>
+	<title>Coronavirus (COVID-19) Resource Exhaustion Simulator</title>
+
+	<META name="description" content="A pandemic simulator exemplifying hospital resource exhaustion.">
+	<META name="keywords" content="Coronavirus, COVID-19, Face Masks, Regional Resources, CDC Resources, Trackers">
+	<META name="copyright" content="(c) 2020 Jason Baker">
+	<META name="Author" content="Jason Baker">
+
+	<link rel="stylesheet" href="inc/bootstrap-4.4.1/bootstrap.min.css">
+	<link rel="stylesheet" href="inc/bootswatch-flatly/bootstrap.min.css">
+	<!-- from: https://github.com/evilstreak/markdown-js" -->
+	<script src="inc/markdown-js-0.5.0/markdown.js"></script>
+	<!-- <script src="inc/bootstrap-4.4.1/bootstrap.min.js"></script> -->
+	<!-- <link rel="stylesheet" href="inc/fontawesome-free-5.12.1/css/all.min.css"> -->
+	<style>
+		* { font-size:3vmin; }
+		@media screen and (min-width: 1000px) {
+			* { font-size:18px; }
+		}
+		.jumbotron { min-height:100%; max-width:1200px; margin-left:auto; margin-right:auto; }
+		H5 { font-weight:700; }
+		P { margin-left:0.5rem; margin-right:0.5rem; text-align:justify; }
+		A { color:#3498DB!important; }
+		IMG { max-width:100%; }
+		.section { margin-bottom:1rem; border-top:1px solid rgba(0,0,0,0.15); padding-top:1rem; }
+	</style>
+
+	<script>
+		function loadDoc(divId, docName) {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var contents = this.responseText;
+					if (docName.endsWith(".md")) {
+						contents = markdown.toHTML(contents);
+					}
+					console.log("loaded " + docName + " for div '" + divId + "'");
+					document.getElementById(divId).innerHTML = contents;
+				}
+			};
+			xhttp.open("GET", docName, true);
+			xhttp.send();
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {			
+			loadDoc("essentialResources", "essential resources.html");
+			loadDoc("regionalResources", "regional resources.html");
+			loadDoc("survivalGuide", "survival guide.html");
+			loadDoc("data", "data.md");
+			loadDoc("help", "help.md");
+			loadDoc("jobs", "jobs.html");
+			loadDoc("newsSources", "news sources.html");			
+			loadDoc("meta", "meta.html");
+		}, false);
+
+		/* js class reference: https://www.w3schools.com/js/js_classes.asp */
+		class CoronaSimSettings {
+
+			/*
+				settings.initialCaseCountOnDayOneInt
+				settings.percentNewCasesPerDayFloat
+				settings.percentCasesResultingInHospitalizationFloat
+				settings.percentCasesResultingInDeathFloat
+				settings.percentCasesResultingInSurvivalFloat
+				settings.numberOfVentilatorsInt
+				settings.numberOfHospitalBedsInt
+				settings.numberOfDaysHospitalizedInt
+			*/
+
+			get initialCaseCountOnDayOneInt() {
+				return this._initialCaseCountOnDayOneInt;
+			}
+
+			set initialCaseCountOnDayOneInt(x) {
+				this._initialCaseCountOnDayOneInt = x;
+			}
+
+			/* 
+				This is the number we use to multiple and determine the new cases per day.
+
+				For example, if this number is 0.10f (10%) and the number of cases on day 1
+				is 100 cases, then the new cases on day two would be 100 cases multiplied by 
+				this percentage: 100 * 0.10f = 10. 
+			*/
+			get percentNewCasesPerDayFloat() {
+				return this._percentageNewCasesPerDayFloat;
+			}
+
+			set percentNewCasesPerDayFloat(x) {
+				this._percentageNewCasesPerDayFloat = x;
+			}
+
+			get percentCasesResultingInHospitalizationFloat() {
+				return this._percentCasesResultingInHospitalizationFloat;
+			}
+
+			set percentCasesResultingInHospitalizationFloat(x) {
+				this._percentCasesResultingInHospitalizationFloat = x;
+			}
+
+			get percentCasesResultingInDeathFloat() {
+				return this._percentCasesResultingInDeathFloat;
+			}
+
+			set percentCasesResultingInDeathFloat(x) {
+				return this._percentCasesResultingInDeathFloat = x;
+			}
+
+			get percentCasesResultingInSurvivalFloat() {
+				return this._percentCasesResultingInSurvivalFloat;
+			}
+
+			set percentCasesResultingInSurvivalFloat(x) {
+				this._percentCasesResultingInSurvivalFloat = x;
+			}
+
+			get numberOfVentilatorsInt() {
+				return this._numberOfVentilatorsInt;
+			}
+
+			set numberOfVentilatorsInt(x) {
+				this._numberOfVentilatorsInt = x;
+			}
+
+			get numberOfHospitalBedsInt() {
+				return this._numberOfHospitalBedsInt;
+			}
+
+			set numberOfHospitalBedsInt(x) {
+				this._numberOfHospitalBedsInt = x;
+			}			
+
+			get numberOfDaysHospitalizedInt() {
+				return this._numberOfDaysHospitalizedInt;
+			}
+
+			set numberOfDaysHospitalizedInt(x) {
+				this._numberOfDaysHospitalizedInt = x;
+			}
+		}
+
+		class DayCaseStats {
+
+			/*
+				dayStats.dayNumberInt
+				dayStats.finalHospitalDayNumberInt
+				dayStats.numberOfCasesInt
+				dayStats.numberOfCasesInHospitalInt
+				dayStats.numberOfCasesResultingInDeathInt
+				dayStats.numberOfCasesResultingInSurvivalInt
+			*/
+
+			/* numberInt = 100, percentFloat = 0.25f, answer = 25 */
+			multiply(numberInt, percentFloat) {
+				//FIXME this doesn't do anything right now!
+			}
+
+			constructor(dayNumberInt, dayBeforeCaseCount, coronaSimSettings) {
+				this._dayNumberInt = dayNumberInt;
+				this._finalHospitalDayNumberInt = this._dayNumberInt + coronaSimSettings.numberOfDaysHospitalizedInt;
+				this._numberOfCasesInt = dayBeforeCaseCount + multiply(dayBeforeCaseCount, coronaSimSettings.percentNewCasesPerDayFloat);
+				this._numberOfCasesInHospitalInt = this._numberOfCasesInt 
+					+ multiply(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInHospitalizationFloat);
+				this._numberOfCasesResultingInDeathInt = this._numberOfCasesInt 
+					+ multiply(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInDeathFloat);
+				this._numberOfCasesResultingInSurvivalInt = this._numberOfCasesInt 
+					+ multiply(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInSurvivalFloat);
+			}
+
+			get dayNumberInt() {
+				return this._dayNumberInt;
+			}
+			set dayNumberInt(x) {
+				this._dayNumberInt = x;
+			}
+			get finalHospitalDayNumberInt() {
+				return this._finalHospitalDayNumberInt;
+			}
+			set finalHospitalDayNumberInt(x) {
+				this._finalHospitalDayNumberInt = x;
+			}
+			get numberOfCasesInt() {
+				return this._numberOfCasesInt;
+			}
+			set numberOfCasesInt(x) {
+				this._numberOfCasesInt = x;
+			}
+			get numberOfCasesInHospitalInt() {
+				return this._numberOfCasesInHospitalInt;
+			}
+			set numberOfCasesInHospitalInt(x) {
+				this._numberOfCasesInHospitalInt = x;
+			}
+			get numberOfCasesResultingInDeathInt() {
+				return this._numberOfCasesResultingInDeathInt;
+			}
+			set numberOfCasesResultingInDeathInt(x) {
+				this._numberOfCasesResultingInDeathInt = x;
+			}
+			get numberOfCasesResultingInSurvivalInt() {
+				return this._numberOfCasesResultingInSurvivalInt;
+			}
+			set numberOfCasesResultingInSurvivalInt(x) {
+				this._numberOfCasesResultingInSurvivalInt = x;
+			}
+		}
+
+		class TotalCaseStats {
+			constructor(dayCaseStatsArray) {
+				this._totalCasesInt = 0;
+				this._totalHospitalizationsInt = 0;
+				this._totalDeathsInt = 0;
+				//FIXME: pseudocode, i can never rememner the forin syntax for JS
+				for (DayCaseStats dayCaseStats : dailyCaseStatsArray) {
+					this._totalCases += dayCaseStats.numberOfCasesInt;
+					this._totalHospitalizationsInt += dayCaseStats.numberOfCasesInHospitalInt;
+					this._totalDeathsInt += dayCaseStats.numberOfCasesResultingInDeathInt;
+					this._totalSurvivalsInt += dayCaseStats.numberOfCasesResultingInSurvivalInt;
+				}
+			}
+
+			get totalCasesInt {
+				return this._totalCasesInt;
+			}
+
+			get totalHospitalizationsInt {
+				return this._totalHospitalizationsInt;
+			}
+
+			get totalDeathsInt {
+				return this._totalDeathsInt;
+			}
+
+			get totalSurvivalsInt {
+				return this._totalSurvivalsInt;
+			}
+		}
+
+		class CoronaSimulator {
+			constructor(coronaSimSettings, debugBool) {
+				this._currentCaseCountInt = settings.initialCaseCountOnDayOneInt;
+				this._currentDayInt = 0;
+				this._debugBool = debugBool;
+				this._coronaSimSettings = coronaSimSettings;	
+				this._dayStatsArray = []; //all day stats so far
+				this._currentHospitalizedDayStatsArray = [] // all day stats that aren't yet expired
+				this._totalCaseStats = new TotalCaseStats(this.__dayStatsArray);
+				debug("CoronaSimulator created, settings:", this._coronaSimSettings);			
+			}
+
+			moveForwardOneDay() {
+				this._currentDayInt += 1;
+				var dayStats = new DayCaseStats(this._currentDayInt, this._currentCaseCount, this._coronaSimSettings);
+				this._dayStatsArray.push(dayStats); //FIXME: method sig
+				this._currentHospitalizedDayStatsArray.push(dayStats); //FIXME: method sig
+				this._currentCaseCountInt = dayStats.numberOfCasesInt;
+
+				//drop any hospital stats that aren't valid anymore
+				var tmpCurrentHospitalDayStatsArray = [];
+				this._totalCurrentHospitalizationsInt = 0;
+				for (var dayStats : this._currentHospitalizedDayStatsArray) { //FIXME: syntax
+					if (dayStats.finalHospitalDayNumberInt >= this._currentDayInt) {
+						tmpCurrentHospitalDayStatsArray.push(dayStats); //FIXME: method sig
+						this._totalCurrentHospitalizationsInt += dayStats.numberOfCasesInHospitalInt;
+					}
+				}
+				this._currentHospitalizedDayStatsArray = tmpCurrentHospitalDayStatsArray;
+				this._t
+
+			}
+
+
+
+			debug(message, details) {
+				if (this._debugBool) {
+					if (details == null) {
+						console.log(message);
+					} else {
+						console.log(message, details);
+					}
+				}
+			}
+		}
+
+
+		/* 
+			MVP TODO LIST:
+				* Variable: number of cases to start with
+				* Variable: percentage of cases that result in survival
+				* Variable: number of days patient stays in a hospital
+				* Variable: number of hospital beds
+				* Variable: number of ventilators
+				* Show graph
+				* Find example starter data, link to sources as much as possible
+				* Need to source data: 
+
+			FUTURE FEATURES:
+				* Show table of data
+				* allow users to see data for their city, different countries
+				* how do numbers change if we can add ventilators every day?
+
+
+		*/
+
+	</script>
+</head>
+<body>
+
+<div class="jumbotron">
+	<h1>Coronavirus Simulator</h1>
+
+	<div class='section'>
+		<h3>What?</h3>
+
+		<p>This is a dynamic simulator built to help citizens understand hospital resource exhaustion.</p>
+	</div>
+
+	<!--
+	-->
+
+	<div class='section'>
+		<h3>Disclaimer</h3>
+
+		<p>Jason is not a trained scientist or doctor. This page is not an authority on <strong>anything</strong>, it's simply a collection of information that Jason hopes you might find useful. Do your own research. Listen to the <a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019">WHO</a>, the <a href="https://www.cdc.gov/coronavirus/2019-nCoV/index.html">CDC</a>, and be safe.</p>
+	</div>
+	
+	<div class='section' id='essentialResources' /></div>	
+	<div class='section' id="help"></div>		
+	<div class='section' id="regionalResources"></div>
+	<div class='section' id="data"></div>
+	<div class='section' id='survivalGuide' /></div>
+	<div class='section' id='jobs' /></div>	
+	<div class='section' id="newsSources"></div>
+	<div class='section' id="meta"></div>
+</div>
+
+
+</body>
+</html>
