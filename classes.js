@@ -111,7 +111,6 @@ class DayStats {
 
 	constructor(dayNumberInt, dayBeforeCaseCount, coronaSimSettings) {
 		this._dayNumberInt = dayNumberInt;
-		this._dayNumberDate = incrementDate(coronaSimSettings.initialDate, dayNumberInt);
 		this._finalHospitalDayNumberInt = this._dayNumberInt + coronaSimSettings.numberOfDaysHospitalizedInt;
 		this._numberOfNewCasesInt = multiplyAndRound(dayBeforeCaseCount, coronaSimSettings.percentNewCasesPerDayInt);
 		this._numberOfCasesInt = dayBeforeCaseCount + this._numberOfNewCasesInt;
@@ -119,10 +118,6 @@ class DayStats {
 		this._numberOfCasesResultingInDeathInt = multiplyAndRound(this._numberOfNewCasesInt, coronaSimSettings.percentCasesResultingInDeathInt);
 		debug("DayStats created. dayNumberInt: " + dayNumberInt + ", dayBeforeCaseCount: " 
 			+ dayBeforeCaseCount + ", coronaSimSettings: ", this);
-	}
-
-	get dayNumberDate() {
-		return this._dayNumberDate;
 	}
 
 	get dayNumberInt() {

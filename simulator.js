@@ -41,7 +41,7 @@ class CoronaSimulator {
 			message += "\tTotal Number of hospital beds: " + this._coronaSimSettings.numberOfHospitalBedsInt.toLocaleString() + "\n";
 			message += "\tCurrent hospital cases: " + this.hospitalizationCountIntForDay(this._currentDayInt).toLocaleString() + "\n";
 			message += "\tCurrent beds free: " + this.hospitalBedsAvailableIntForDay(this._currentDayInt).toLocaleString() + "\n";
-			debug(message, this);	
+			debug(message, this);
 		}
 	}		
 

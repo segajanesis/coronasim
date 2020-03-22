@@ -7,7 +7,13 @@ var billion = million * 1000;
 var trillion = billion * 1000;
 
 function printDayShort(date) {
-	return months[date.getMonth()] + " " + date.getDate() + " '" + (date.getYear() % 100);
+	var result = months[date.getUTCMonth()] + " " + date.getUTCDate() + " '" + (date.getUTCFullYear() % 100);
+	debug("printDayShort: " + date + " -> " + result, null);
+	return result;
+}
+
+function el(elementId) {
+	return document.getElementById(elementId);
 }
 
 function printNumberShort(number) {
@@ -81,7 +87,7 @@ function getPercentage(currentValueInt, maxValueInt) {
 
 function incrementDate(date, dayCountInt) {
 	var d = new Date(date.getTime());
-	d.setDate(d.getDate() + dayCountInt);
+	d.setUTCDate(d.getUTCDate() + dayCountInt);
 	debug("Incremented date: " + date + " by " + dayCountInt + ": " + d);
 	return d;
 }
@@ -150,7 +156,7 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 
 	for (var tableEntry of tableDataArray) {
 		html += "<tr>";
-		var rowDate = incrementDate(new Date(), tableEntry.dayInt);
+		var rowDate = incrementDate(coronaSimSettings.initialDate, tableEntry.dayInt);
 		html += "<td>" + printDayShort(rowDate) + "</td>";
 		html += "<td>" + printNumberShort(tableEntry.newCasesInt) + "</td>";
 		html += "<td>" + printNumberShort(tableEntry.totalCasesInt) + "</td>";
