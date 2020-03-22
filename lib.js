@@ -1,5 +1,26 @@
 var debugMode = false;
 
+var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+
+function printDayShort(date) {
+	return months[date.getMonth()] + " " + date.getDate();
+}
+
+function printNumberShort(number) {
+	var thousand = 1000;
+	var million = thousand * 1000;
+	var billion = million * 10000;
+	var numberToCheck = number < 0 ? (number * -1) : number;
+	if (numberToCheck > billion) {
+		number = ((number * 1.0) / (billion * 1.0)) 
+		return number.toFixed(2) + "b";
+	} else if (numberToCheck > million) {
+		number = ((number * 1.0) / (million * 1.0)) 
+		return number.toFixed(2) + "m";
+	}
+	return number.toLocaleString();
+}
+
 function debug(message, details) {
 	if (debugMode) {
 		if (details == null) {
@@ -51,6 +72,7 @@ function getPercentage(currentValueInt, maxValueInt) {
 function incrementDate(date, dayCountInt) {
 	var d = new Date(date.getTime());
 	d.setDate(d.getDate() + dayCountInt);
+	debug("Incremented date: " + date + " by " + dayCountInt + ": " + d);
 	return d;
 }
 
@@ -82,10 +104,9 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 			dayInt: 0,
 			newCasesInt: coronaSimSettings.initialCaseCountInt,
 			totalCasesInt: coronaSimSettings.initialCaseCountInt,
-			totalHospitalizationsInt: 0,
 			totalDeathsInt: 0,
-			totalSurvivalsInt: 0,
-			bedsFree: coronaSimSettings.numberOfHospitalBedsInt
+			currentHospitalizedInt: 0,
+			bedsFreeInt: coronaSimSettings.numberOfHospitalBedsInt
 	});
 
 	for (i = 0; i < numberOfDaysToSimulate; i++) {
@@ -94,37 +115,34 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 			dayInt: simulator.currentDayInt,
 			newCasesInt: simulator.currentDayStats.numberOfNewCasesInt,
 			totalCasesInt: simulator.totalStats.totalCasesInt,
-			totalHospitalizationsInt: simulator.totalStats.totalHospitalizationsInt,
 			totalDeathsInt: simulator.totalStats.totalDeathsInt,
-			totalSurvivalsInt: simulator.totalStats.totalSurvivalsInt,
-			bedsFree: simulator.hospitalBedsAvailableIntForDay(simulator.currentDayInt)
+			currentHospitalizedInt: simulator.hospitalizationCountIntForDay(simulator.currentDayInt),
+			bedsFreeInt: simulator.hospitalBedsAvailableIntForDay(simulator.currentDayInt)
 		});
 	}
 
-	var html = "<table class='table'>\n<thead>";
+	var html = "<table class='table'>\n";
+	html += "<thead>";
 	html += "<th>Day</th>";
 	html += "<th>New Cases</th>";
 	html += "<th>Total<br/>Cases</th>";
 	html += "<th>Total<br/>Deaths</th>";
-	html += "<th>Total<br/>Survivals</th>";
-	html += "<th>Total<br/>Hospitalizations</th>";
+	html += "<th>Currently<br/>Hospitalized</th>";
 	html += "<th>Beds Free</th>";
-	html += "</thead>\n<tbody>\n";
+	html += "</thead>\n";
+	html += "<tbody>\n";
 
 	for (var tableEntry of tableDataArray) {
 		html += "<tr>";
-		html += "<td>" + tableEntry.dayInt + "</td>";
-		//new cases (% of total)
-
-		html += "<td>" + tableEntry.newCasesInt.toLocaleString() + "</td>";
-		html += "<td>" + tableEntry.totalCasesInt.toLocaleString() + "</td>";
-		html += "<td>" + tableEntry.totalDeathsInt.toLocaleString() + "</td>";
-		html += "<td>" + tableEntry.totalSurvivalsInt.toLocaleString() + "</td>";
-		html += "<td>" + tableEntry.totalHospitalizationsInt.toLocaleString() + "</td>";
-		html += "<td>" + tableEntry.bedsFree.toLocaleString() + "</td>";
+		var rowDate = incrementDate(new Date(), tableEntry.dayInt);
+		html += "<td>" + printDayShort(rowDate) + "</td>";
+		html += "<td>" + printNumberShort(tableEntry.newCasesInt) + "</td>";
+		html += "<td>" + printNumberShort(tableEntry.totalCasesInt) + "</td>";
+		html += "<td>" + printNumberShort(tableEntry.totalDeathsInt) + "</td>";
+		html += "<td>" + printNumberShort(tableEntry.currentHospitalizedInt) + "</td>";
+		html += "<td>" + printNumberShort(tableEntry.bedsFreeInt) + "</td>";
 		html += "</tr>\n";
 	}
-
 
 	html += "</tbody>\n</table>";
 	return html;

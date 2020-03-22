@@ -3,16 +3,12 @@
 	<title>Coronavirus (COVID-19) Resource Exhaustion Simulator</title>
 
 	<META name="description" content="A pandemic simulator exemplifying hospital resource exhaustion.">
-	<META name="keywords" content="Coronavirus, COVID-19, Face Masks, Regional Resources, CDC Resources, Trackers">
+	<META name="keywords" content="Coronavirus, COVID-19, Flatten The Curve, Simulator">
 	<META name="copyright" content="(c) 2020 Jason Baker">
 	<META name="Author" content="Jason Baker">
 
 	<link rel="stylesheet" href="inc/bootstrap-4.4.1/bootstrap.min.css">
-	<link rel="stylesheet" href="inc/bootswatch-flatly/bootstrap.min.css">
-	<!-- from: https://github.com/evilstreak/markdown-js" -->
-	<script src="inc/markdown-js-0.5.0/markdown.js"></script>
-	<!-- <script src="inc/bootstrap-4.4.1/bootstrap.min.js"></script> -->
-	<!-- <link rel="stylesheet" href="inc/fontawesome-free-5.12.1/css/all.min.css"> -->
+	<link rel="stylesheet" href="inc/bootswatch-flatly/bootstrap.min.css">	
 	<script src="lib.js"></script>
 	<script src="classes.js"></script>
 	<script src="simulator.js"></script>
@@ -71,52 +67,71 @@
 		<div class='section'>
 			<h3>What?</h3>
 
-			<p>This is a dynamic simulator built to help citizens understand hospital resource exhaustion.</p>
+			<p>This is a dynamic simulator built to help citizens understand hospital resource exhaustion. It illustrates that we must take quarantine seriously or our negligence will result in people dying due to a lack of hospital resources.</p>
+
+			<p>With the default settings, this simulator shows that if we continue our alarming rate of cases growing day over day, we'll have an actively hospitalized number of patients of about 2 million people about one month from now. That's a big problem, because an estimate I've seen is that we have one million hospital beds in the United States - total.</p>
+
+			<p>The current death rate from the virus appears to be 4% if you look at <a href="https://coronavirus.jhu.edu/map.html">current case total</a> to death ratio, or 10% if you look at survival to death ratio. 4% of two million patients with corona dying would be 80,000 deaths, BUT, if one million people can't get into the hospital who need that ventilator to live, we might have 500,000 deaths or maybe even all 1,080,000. That's nearly a ten fold jump, and as the simulator shows, it gets worse from there.</p>
+
+			<p>We MUST take quarantine seriously. Now is not the time to refute the news and discard this as 'just the flu'. It is not the common flu. Coronavirus has a hospitalization rate and death rate orders of magnitude higher than the common flu, and, if we can't <a href="https://www.nytimes.com/2020/03/11/science/coronavirus-curve-mitigation-infection.html">flatten the curve</a> and control the number of people needing hospitalization, many people will die who don't need to.</p>
+
+			<p>Every day that we spend in quarantine buys our nation time to <a href="https://www.reddit.com/r/Coronavirus/comments/fmc5ty/ford_gm_and_tesla_may_make_ventilators_to_combat/">manufacture additional ventilators</a> and prepare <a href="https://www.kuow.org/stories/field-hospital-going-up-on-shoreline-soccer-field">more hospital beds</a> that many of us might need to beat this.</p>
+
+			<hr />
+
+			<p>The default settings in the simulator are very crudely estimated right now, but that will be improved (with sources provided) soon.</p>
+
+			<p>For now, by default, we assume 1 million beds are available, which is an estimate I've heard (but need to go find the source for) for the number of beds in United States hospitals right now. Other settings are currently configured for a very loose interpretation of today's (March 21) stats in the united states: about 25,000 confirmed cases, up 25% (~5,000) from yesterday; a death rate of about 4%, a (conservative?) estimate of 10% of confirmed cases resulting in hospitalization, and a very conservative estimate of hospitalizations lasting for 3 days.</p>
+
+			<p><strong>Note:</strong> This is a beta version of the simulator. All of the code is on <a href="https://github.com/codercowboy/coronasim">github</a>. Code review me, PLEASE! If you find a bug, please <a href="mailto:jason@onejasonforsale.com">email me</a>!</p>
 		</div>
 
-		<div class="form-row">
-			<div class="form-group col-md-6">
-				<label class="form-label">Initial Cases</label>
-				<input class="form-control-range" id="initialCasesSlider" type="range" min="10" max="100000" value="25000" />
+		<div class='section'>
+			<h3>The Simulator</h3>
+			<div class="form-row mt-3">
+				<div class="form-group col-md-6">
+					<label class="form-label">Initial Cases</label>
+					<input class="form-control-range" id="initialCasesSlider" type="range" min="10" max="100000" value="25000" />
+				</div>
+				<div class="form-group col-md-6">
+					<label class="form-label">Days To Simulate</label>
+					<input class="form-control-range" id="daysToSimulate" type="range" min="10" max="1000" value="60" />
+				</div>
 			</div>
-			<div class="form-group col-md-6">
-				<label class="form-label">Days To Simulate</label>
-				<input class="form-control-range" id="daysToSimulate" type="range" min="30" max="1000" value="30" />
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label class="form-label">New Cases Per Day</label>
+					<input class="form-control-range" id="newCasesPerDaySlider" type="range" min="1" max="100" value="25" format="percentage" />
+				</div>
+				<div class="form-group col-md-6">
+					<label class="form-label">Cases Resulting In Death</label>
+					<input class="form-control-range" id="casesResultingInDeathSlider" type="range" min="1" max="100" value="4" format="percentage" />
+				</div>
+				
 			</div>
-		</div>
-		<div class="form-row">
-			<div class="form-group col-md-6">
-				<label class="form-label">New Cases Per Day</label>
-				<input class="form-control-range" id="newCasesPerDaySlider" type="range" min="1" max="100" value="25" format="percentage" />
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label class="form-label">Cases Resulting In Hospitalization</label>
+					<input class="form-control-range" id="casesResultingInHospitalizationSlider" type="range" min="1" max="100" value="10" format="percentage" />
+				</div>
+				<div class="form-group col-md-6">
+					<label class="form-label">Number Of Days In Hospital Per Hospitalization</label>
+					<input class="form-control-range" id="numberOfDaysHospitalized" type="range" min="1" max="30" value="3" />
+				</div>
 			</div>
-			<div class="form-group col-md-6">
-				<label class="form-label">Cases Resulting In Death</label>
-				<input class="form-control-range" id="casesResultingInDeathSlider" type="range" min="1" max="100" value="4" format="percentage" />
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label class="form-label">Hospital Beds Available</label>
+					<input class="form-control-range" id="hospitalBedsAvailableSlider" type="range" min="1000" max="10000000" value="1000000" />
+				</div>
 			</div>
-			
-		</div>
-		<div class="form-row">
-			<div class="form-group col-md-6">
-				<label class="form-label">Cases Resulting In Hospitalization</label>
-				<input class="form-control-range" id="casesResultingInHospitalizationSlider" type="range" min="1" max="100" value="10" format="percentage" />
+			<div class="form-row">
+				<button class="btn btn-primary" onClick="runSimulation()">Run Simulation</button>
 			</div>
-			<div class="form-group col-md-6">
-				<label class="form-label">Number Of Days In Hospital Per Hospitalization</label>
-				<input class="form-control-range" id="numberOfDaysHospitalized" type="range" min="1" max="30" value="3" />
-			</div>
-		</div>
-		<div class="form-row">
-			<div class="form-group col-md-6">
-				<label class="form-label">Hospital Beds Available</label>
-				<input class="form-control-range" id="hospitalBedsAvailableSlider" type="range" min="1000" max="5000000" value="100000" />
-			</div>
-		</div>
-		<div class="form-row">
-			<button class="btn btn-primary" onClick="runSimulation()">Run Simulation</button>
-		</div>
 
-		<hr />
-		<div id='simulationOutput' />
+			<hr />
+			<div id='simulationOutput' />
+		</div>
 	</div>
 
 </body>

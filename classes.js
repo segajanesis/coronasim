@@ -106,9 +106,9 @@ class DayStats {
 		this._finalHospitalDayNumberInt = this._dayNumberInt + coronaSimSettings.numberOfDaysHospitalizedInt;
 		this._numberOfNewCasesInt = multiplyAndRound(dayBeforeCaseCount, coronaSimSettings.percentNewCasesPerDayInt);
 		this._numberOfCasesInt = dayBeforeCaseCount + this._numberOfNewCasesInt;
-		this._numberOfCasesInHospitalInt = multiplyAndRound(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInHospitalizationInt);
-		this._numberOfCasesResultingInDeathInt = multiplyAndRound(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInDeathInt);
-		this._numberOfCasesResultingInSurvivalInt = multiplyAndRound(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInSurvivalInt);
+		this._numberOfCasesInHospitalInt = multiplyAndRound(this._numberOfNewCasesInt, coronaSimSettings.percentCasesResultingInHospitalizationInt);
+		this._numberOfCasesResultingInDeathInt = multiplyAndRound(this._numberOfNewCasesInt, coronaSimSettings.percentCasesResultingInDeathInt);
+		this._numberOfCasesResultingInSurvivalInt = multiplyAndRound(this._numberOfNewCasesInt, coronaSimSettings.percentCasesResultingInSurvivalInt);
 		debug("DayStats created. dayNumberInt: " + dayNumberInt + ", dayBeforeCaseCount: " 
 			+ dayBeforeCaseCount + ", coronaSimSettings: ", this);
 	}
