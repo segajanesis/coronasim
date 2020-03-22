@@ -16,25 +16,29 @@ function el(elementId) {
 	return document.getElementById(elementId);
 }
 
-function printNumberShort(number) {
-	
+function printNumberShort(number) {	
+	number = Math.floor(number);
 	var numberToCheck = number < 0 ? (number * -1) : number;
+	var result = 0;
 	if (numberToCheck >= trillion) {
-		number = ((number * 1.0) / (trillion * 1.0)) 
-		return number.toFixed(2) + "t";
+		number = (number / (trillion * 1.0)) 
+		result = number.toFixed(2) + "t";
 	} else if (numberToCheck >= billion) {
-		number = ((number * 1.0) / (billion * 1.0)) 
-		return number.toFixed(2) + "b";
+		number = (number / (billion * 1.0)) 
+		result =  number.toFixed(2) + "b";
 	} else if (numberToCheck >= million) {
-		number = ((number * 1.0) / (million * 1.0)) 
-		return number.toFixed(2) + "m";
+		number = (number / (million * 1.0)) 
+		result =  number.toFixed(2) + "m";
 	} else if (numberToCheck < 10000) {
-		return number.toLocaleString();
+		result =  number.toLocaleString();
 	} else if (numberToCheck >= thousand) {
-		number = ((number * 1.0) / (thousand * 1.0)) 
-		return number.toFixed(0) + "k";
+		number = (number / (thousand * 1.0)) 
+		result =  Math.floor(number) + "k";
+	} else {
+		result = number.toLocaleString();
 	}
-	return number.toLocaleString();
+	debug("printNumberShort " + number.toLocaleString() + " -> " + result);
+	return result;
 }
 
 function debug(message, details) {
