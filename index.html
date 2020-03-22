@@ -7,6 +7,8 @@
 	<META name="copyright" content="(c) 2020 Jason Baker">
 	<META name="Author" content="Jason Baker">
 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<link rel="stylesheet" href="inc/bootstrap-4.4.1/bootstrap.min.css">
 	<link rel="stylesheet" href="inc/bootswatch-flatly/bootstrap.min.css">	
 	
@@ -27,6 +29,8 @@
 		A { color:#3498DB!important; }
 		IMG { max-width:100%; }
 		.section { margin-bottom:1rem; border-top:1px solid rgba(0,0,0,0.15); padding-top:1rem; }
+		.form-group { margin-top:1rem; margin-bottom:3rem; }
+		.form-group LABEL { margin-bottom:2rem; }		
 	</style>
 
 	<script>		
@@ -82,11 +86,11 @@
 
 				<p>This is a dynamic simulator built to help citizens understand hospital resource exhaustion. It illustrates that we must take quarantine seriously or our negligence will result in people dying due to a lack of hospital resources.</p>
 
-				<p>With the default settings, this simulator shows that if we continue our alarming rate of cases growing day over day, we'll have an actively hospitalized number of patients of about 2 million people about one month from now. That's a big problem, because we have <a href="https://www.cdc.gov/nchs/data/hus/2017/089.pdf">one million hospital beds in the United States</a> - total.</p>
+				<p>With the default settings, this simulator shows that if we continue our alarming rate of cases growing day over day, we'll have <strong>two million</strong> coronavirus patients requiring hospitalization one month from now. That's a big problem, because we only have <a href="https://www.cdc.gov/nchs/data/hus/2017/089.pdf">one million hospital beds in the United States</a> - total.</p>
 
-				<p>The current death rate from the virus appears to be 4% if you look at <a href="https://coronavirus.jhu.edu/map.html">current case total</a> to death ratio, or 10% if you look at survival to death ratio. 4% of two million patients with corona dying would be 80,000 deaths, BUT, if one million people can't get into the hospital who need that ventilator to live, we might have 500,000 deaths or maybe even all 1,080,000, and as the simulator shows, it gets worse from there.</p>
+				<p>The current death rate from the virus appears to be 4% if you look at <a href="https://coronavirus.jhu.edu/map.html">current case total</a> to death ratio, or 10% if you look at survival to death ratio. 4% of two million patients with corona dying would be 80,000 deaths. BUT, if one million patients needing ventilators can't get into overcrowded hospitals, we might have 500,000 deaths or maybe even all 1,000,000, and as the simulator shows - it gets worse from there.</p>
 
-				<p>However, if we simply adjust our per-day growth rate down to 10% per day, we buy ourselves time. At a 10% infection growth rate, our hospital beds would not be exhausted until 3 months from now. If we <a href="https://www.npr.org/sections/health-shots/2020/03/17/817251610/its-time-to-get-serious-about-social-distancing-here-s-how">socially distance</a> ourselves, we will reduce the number of new cases and buy ourselves time.</p>
+				<p>However, if we simply adjust our per-day infection growth rate down to 10% from the current trend of 25%+, we buy ourselves time. At a 10% growth rate, our hospital beds would not be exhausted until 3 months from now. If we <a href="https://www.npr.org/sections/health-shots/2020/03/17/817251610/its-time-to-get-serious-about-social-distancing-here-s-how">socially distance</a> ourselves, we will reduce the number of new cases and buy ourselves time.</p>
 
 				<p><strong>We MUST take quarantine seriously.</strong> Now is not the time to refute the news and discard this as 'just the flu'. It is not the common flu. Coronavirus has a death rate <a href="https://www.livescience.com/new-coronavirus-compare-with-flu.html">at least ten times higher than the common flu</a>, and, if we can't <a href="https://www.nytimes.com/2020/03/11/science/coronavirus-curve-mitigation-infection.html">flatten the curve</a> and control the number of people needing hospitalization, many people will die who don't need to.</p>
 
@@ -104,38 +108,43 @@
 			<div class='section'>
 				<h3>The Simulator</h3>
 				<div class="form-row mt-3">
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-12">
 						<label class="form-label">Initial Cases</label>
 						<input class="form-control-range" id="initialCasesSlider" type="range" min="10" max="100000" value="25000" />
 					</div>
-					<div class="form-group col-md-6">
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-12">
 						<label class="form-label">Days To Simulate</label>
 						<input class="form-control-range" id="daysToSimulate" type="range" min="10" max="1000" value="60" />
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-12">
 						<label class="form-label">New Cases Per Day</label>
 						<input class="form-control-range" id="newCasesPerDaySlider" type="range" min="1" max="100" value="25" format="percentage" />
 					</div>
-					<div class="form-group col-md-6">
-						<label class="form-label">Cases Resulting In Death</label>
-						<input class="form-control-range" id="casesResultingInDeathSlider" type="range" min="1" max="100" value="4" format="percentage" />
-					</div>
-					
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-12">
+						<label class="form-label">Cases Resulting In Death</label>
+						<input class="form-control-range" id="casesResultingInDeathSlider" type="range" min="1" max="100" value="4" format="percentage" />
+					</div>					
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-12">
 						<label class="form-label">Cases Resulting In Hospitalization</label>
 						<input class="form-control-range" id="casesResultingInHospitalizationSlider" type="range" min="1" max="100" value="10" format="percentage" />
 					</div>
-					<div class="form-group col-md-6">
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-12">
 						<label class="form-label">Number Of Days In Hospital Per Hospitalization</label>
 						<input class="form-control-range" id="numberOfDaysHospitalized" type="range" min="1" max="30" value="3" />
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-12">
 						<label class="form-label">Hospital Beds Available</label>
 						<input class="form-control-range" id="hospitalBedsAvailableSlider" type="range" min="1000" max="10000000" value="1000000" />
 					</div>

@@ -1,22 +1,32 @@
 var debugMode = false;
 
 var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+var thousand = 1000;
+var million = thousand * 1000;
+var billion = million * 1000;
+var trillion = billion * 1000;
 
 function printDayShort(date) {
 	return months[date.getMonth()] + " " + date.getDate();
 }
 
 function printNumberShort(number) {
-	var thousand = 1000;
-	var million = thousand * 1000;
-	var billion = million * 10000;
+	
 	var numberToCheck = number < 0 ? (number * -1) : number;
-	if (numberToCheck > billion) {
+	if (numberToCheck >= trillion) {
+		number = ((number * 1.0) / (trillion * 1.0)) 
+		return number.toFixed(2) + "t";
+	} else if (numberToCheck >= billion) {
 		number = ((number * 1.0) / (billion * 1.0)) 
 		return number.toFixed(2) + "b";
-	} else if (numberToCheck > million) {
+	} else if (numberToCheck >= million) {
 		number = ((number * 1.0) / (million * 1.0)) 
 		return number.toFixed(2) + "m";
+	} else if (numberToCheck < 10000) {
+		return number.toLocaleString();
+	} else if (numberToCheck >= thousand) {
+		number = ((number * 1.0) / (thousand * 1.0)) 
+		return number.toFixed(0) + "k";
 	}
 	return number.toLocaleString();
 }
@@ -86,11 +96,12 @@ function updateSliderLabel(slider) {
 	if (text.indexOf(" [") != -1) {
 		text = text.substr(0, text.indexOf(" ["));
 	}
-	text += " [" + slider.valueAsNumber.toLocaleString() 
+	
 	if (slider.getAttribute("format") == "percentage") {
-		text += "%";
+		text += " [" + slider.valueAsNumber.toLocaleString() + "%]";
+	} else {
+		text += " [" + printNumberShort(slider.valueAsNumber) + "]";
 	}
-	text += "]";
 	slider.previousElementSibling.innerText = text;
 }
 
@@ -119,6 +130,11 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 			currentHospitalizedInt: simulator.hospitalizationCountIntForDay(simulator.currentDayInt),
 			bedsFreeInt: simulator.hospitalBedsAvailableIntForDay(simulator.currentDayInt)
 		});
+		var totalCases = simulator.totalStats.totalCasesInt;
+		if (totalCases > (7 * billion)) {
+			console.log("stopping simulation, more cases than people on earth: " + totalCases.toLocaleString());
+			break;
+		}
 	}
 
 	var html = "<table class='table'>\n";

@@ -4,6 +4,7 @@
  * Add graph lib
  * Populate graph
  * Need to source data
+ * Add population cap
 
 *FUTURE FEATURES*
 
