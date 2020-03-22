@@ -52,22 +52,22 @@ function isInteger(x) {
 	return typeof x === "number" && isFinite(x) && Math.floor(x) === x; 
 }
 //from: https://stackoverflow.com/questions/3885817/how-do-i-check-that-a-number-is-Int-or-integer
-function isInt(x) { 
+function isFloat(x) { 
 	return !!(x % 1); 
 }
 
-/* numberInt = 100, percentInt = 25 (ie 25%), answer = 25 */
-function multiplyAndRound(numberInt, percentInt) {
+/* numberInt = 100, percentFloat = 25.0 (ie 25%), answer = 25 */
+function multiplyAndRound(numberInt, percentFloat) {
 	if (!isInteger(numberInt)) {
 		console.log("multiplyAndRound error, numberInt is not an integer:" + numberInt);
 		return null;
 	}
-	if (!isInteger(percentInt)) {
-		console.log("multiplyAndRound error, percentInt is not an integer:" + percentInt);
+	if (!isFloat(percentFloat)) {
+		console.log("multiplyAndRound error, percentFloat is not a float:" + percentFloat);
 		return null;
 	}
-	var result = (numberInt * 1.0) * (percentInt / 100.0);
-	debug("Result of multiply, numberInt: " + numberInt + ", percentInt: " + percentInt + ", result: " + result);
+	var result = (numberInt * 1.0) * percentFloat;
+	debug("Result of multiply, numberInt: " + numberInt + ", percentFloat: " + percentFloat + ", result: " + result);
 	return Math.round(result);
 }
 
@@ -93,79 +93,103 @@ function incrementDate(date, dayCountInt) {
 }
 
 function getSliderValue(sliderId) {
-	return document.getElementById(sliderId).valueAsNumber;
+	var slider = el(sliderId);
+
+	if (slider.getAttribute("format") == "percentage") {
+		return ((slider.valueAsNumber * 1.0) / 10.0);
+	}
+
+	var scaleControl = el(slider.getAttribute("scaleControl"));
+	var multiplier = 1;
+	if (scaleControl != null) {
+		if (scaleControl.value == "Billion") {
+			multiplier = billion;
+		} else if (scaleControl.value == "Million") {
+			multiplier = million;
+		} else if (scaleControl.value == "Thousand") {
+			multiplier = thousand;
+		}
+	}	
+	return slider.valueAsNumber * multiplier;	
 }
 
 function updateSliderLabel(slider) {
-	var valueAsNumber = slider.valueAsNumber;
+	var sliderValue = getSliderValue(slider.id);
 	var text = slider.previousElementSibling.innerText;
 	if (text.indexOf(" [") != -1) {
 		text = text.substr(0, text.indexOf(" ["));
 	}
 	
 	if (slider.getAttribute("format") == "percentage") {
-		text += " [" + slider.valueAsNumber.toLocaleString() + "%]";
+		text += " [" + sliderValue + "%]";
 	} else {
-		text += " [" + printNumberShort(slider.valueAsNumber) + "]";
+		text += " [" + sliderValue.toLocaleString() + "]";
+		if (sliderValue > (100 * thousand)) {
+			text += " (" + printNumberShort(sliderValue) + ")";
+		}
 	}
 	slider.previousElementSibling.innerText = text;
 }
 
-function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
+function populateTemplate(templateHTML, dayStats, tableStats, currentHospitalizedInt, coronaSimSettings) {
+	var value = "";
+	var percentage = "";
+
+	var rowDate = incrementDate(coronaSimSettings.initialDate, dayStats.dayNumberInt);
+	value = printDayShort(rowDate) + " (day no: " +  dayStats.dayNumberInt + ")";
+	templateHTML.replace("${day)", value);
+
+	value = "" + printNumberShort(totalStats.totalInfectionsInt) + " total, ";
+	percentage = " (" + getPercentage(dayStats.infectionsInt, totalStats.totalInfectionsInt) + ")";
+	value += printNumberShort(dayStats.infectionsInt) + percentage + " new today.";
+	templateHTML.replace("${infections)", value);
+
+	value = "" + printNumberShort(totalStats.totalTestedInt) + " total, ";
+	percentage = " (" + getPercentage(dayStats.testedInt, totalStats.totalTestedInt) + ")";
+	value += printNumberShort(dayStats.testedInt) + percentage + " new today.";
+	templateHTML.replace("${testResults)", value);
+
+	var bedsUsed = currentHospitalizedInt;
+	var bedsFree = coronaSimSettings.hospitalBedsInt - bedsUsed;
+	percentage = " (" + getPercentage(bedsUsed, coronaSimSettings.hospitalBedsInt) + ")";		
+	value = "" + printNumberShort(bedsUsed) + percentage + " used, ";
+	percentage = " (" + getPercentage(bedsFree, coronaSimSettings.hospitalBedsInt) + ")";
+	value += printNumberShort(bedsFree) + percentage + " free.";
+	templateHTML.replace("${hospitalBeds)", value);
+
+	value = "" + printNumberShort(totalStats.totalInfectionsInt) + " infected, ";
+	var survivors = totalStats.totalInfectionsInt - totalStats.totalDeathsInt;
+	percentage = " (" + getPercentage(survivors, totalStats.totalInfectionsInt) + ")";
+	value += printNumberShort(survivors) + percentage + " survivors, ";
+	percentage = " (" + getPercentage(totalStats.totalDeathsInt, totalStats.totalInfectionsInt) + ")";
+	value += printNumberShort(totalStats.totalDeathsInt) + percentage + " deaths.";
+	templateHTML.replace("${totals)", value);
+}
+
+function generateSimulationOutput(templateHTML, coronaSimSettings) {
 	var simulator = new CoronaSimulator(coronaSimSettings);
 	
 	var tableDataArray = [];
 
-	//first day
-	tableDataArray.push({
-			dayInt: 0,
-			newCasesInt: 0,
-			totalCasesInt: coronaSimSettings.initialCaseCountInt,
-			totalDeathsInt: simulator.initialDeathCount,
-			currentHospitalizedInt: 0,
-			bedsFreeInt: coronaSimSettings.numberOfHospitalBedsInt
-	});
-
-	for (i = 0; i < numberOfDaysToSimulate; i++) {
+	for (i = 0; i < coronaSimSettings.simulatonDaysInt; i++) {
 		simulator.moveForwardOneDay();				
 		tableDataArray.push({
-			dayInt: simulator.currentDayInt,
-			newCasesInt: simulator.currentDayStats.numberOfNewCasesInt,
-			totalCasesInt: simulator.totalStats.totalCasesInt,
-			totalDeathsInt: simulator.totalStats.totalDeathsInt,
+			dayStats: simulator.currentDayStats,
+			totalStats: simulator.totalStats.copy(),
 			currentHospitalizedInt: simulator.hospitalizationCountIntForDay(simulator.currentDayInt),
-			bedsFreeInt: simulator.hospitalBedsAvailableIntForDay(simulator.currentDayInt)
 		});
-		var totalCases = simulator.totalStats.totalCasesInt;
-		if (totalCases > coronaSimSettings.populationCapInt) {
-			console.log("stopping simulation, hit population limit: " + totalCases.toLocaleString());
+		var totalInfections = simulator.totalStats.totalInfectionsInt;
+		if (totalInfections > coronaSimSettings.populationInt) {
+			console.log("stopping simulation, hit population limit: " + totalInfections.toLocaleString());
 			break;
 		}
 	}
 
-	var html = "<table class='table'>\n";
-	html += "<thead>";
-	html += "<th>Day</th>";
-	html += "<th>New Cases<br/>Today</th>";
-	html += "<th>Total<br/>Cases</th>";
-	html += "<th>Total<br/>Deaths</th>";
-	html += "<th>Beds Used</th>";
-	html += "<th>Beds Free</th>";
-	html += "</thead>\n";
-	html += "<tbody>\n";
-
+	var html = "<div class='testResults'>\n";
 	for (var tableEntry of tableDataArray) {
-		html += "<tr>";
-		var rowDate = incrementDate(coronaSimSettings.initialDate, tableEntry.dayInt);
-		html += "<td>" + printDayShort(rowDate) + "</td>";
-		html += "<td>" + printNumberShort(tableEntry.newCasesInt) + "</td>";
-		html += "<td>" + printNumberShort(tableEntry.totalCasesInt) + "</td>";
-		html += "<td>" + printNumberShort(tableEntry.totalDeathsInt) + "</td>";
-		html += "<td>" + printNumberShort(tableEntry.currentHospitalizedInt) + "</td>";
-		html += "<td>" + printNumberShort(tableEntry.bedsFreeInt) + "</td>";
-		html += "</tr>\n";
-	}
-
-	html += "</tbody>\n</table>";
+		html += populateTemplate(templateHTML, tableEntry.dayStats, tableEntry.totalStats, 
+			tableEntry.currentHospitalizedInt, coronaSimSettings);
+	}		
+	html += "\n</div>";
 	return html;
 }

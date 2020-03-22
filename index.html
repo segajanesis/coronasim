@@ -33,7 +33,22 @@
 		.form-group LABEL { margin-bottom:2rem; }		
 	</style>
 
-	<script>		
+	<script>	
+		var templateHTML = null;
+
+		function loadTemplate(docName) {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					console.log("loaded template: " + docName);
+					templateHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", docName, true);
+			xhttp.send();
+		}	
+
+		loadTemplate("results template.html");
 
 		function runSimulation() {
 			debugMode = true;
@@ -42,30 +57,24 @@
 				return;
 			}
 
-			var startDate = el("initialDate").valueAsDate;
-			if (startDate == null) {
-				alert("Please enter start date.");
-				return;
-			}
-
 			var coronaSimSettings = new CoronaSimSettings();
-			coronaSimSettings.initialCaseCountInt = getSliderValue("initialCasesSlider");
-			coronaSimSettings.initialDate = startDate;
-			coronaSimSettings.percentNewCasesPerDayInt = getSliderValue("newCasesPerDaySlider"); 
-			coronaSimSettings.percentCasesResultingInHospitalizationInt = getSliderValue("casesResultingInHospitalizationSlider");
-			coronaSimSettings.percentCasesResultingInDeathInt = getSliderValue("casesResultingInDeathSlider");
-			coronaSimSettings.percentCasesResultingInSurvivalInt = 100 - coronaSimSettings.percentCasesResultingInDeathInt;
-			coronaSimSettings.numberOfHospitalBedsInt = getSliderValue("hospitalBedsAvailableSlider"); // 1 million			
-			coronaSimSettings.numberOfDaysHospitalizedInt = getSliderValue("numberOfDaysHospitalizedSlider");
-			coronaSimSettings.populationCapInt = getSliderValue("populationCapSlider");
+			coronaSimSettings.initialDate = el("initialDate").valueAsDate;
+			coronaSimSettings.simulatonDaysInt = getSliderValue("daysToSimulateSlider");
+			coronaSimSettings.initialInfectionsInt = getSliderValue("initialInfectionsSlider");
+			coronaSimSettings.infectionDailyIncreasePercentFloat = getSliderValue("newInfectionsPercentSlider");
+			coronaSimSettings.testPercentFloat = getSliderValue("testPercentSlider");
+			coronaSimSettings.positiveTestResultPercentFloat = getSliderValue("positiveTestResultPercentSlider");
+			coronaSimSettings.positiveCaseDeathPercentFloat = getSliderValue("caseDeathPercentSlider");
+			coronaSimSettings.positiveCaseHospitalizedPercentFloat = getSliderValue("caseHospitalizationPercentSlider");
+			coronaSimSettings.daysHospitalizedInt = getSliderValue("numberOfDaysHospitalizedSlider");
+			coronaSimSettings.hospitalBedsInt = getSliderValue("hospitalBedsAvailableSlider");
+			coronaSimSettings.populationInt = getSliderValue("populationCapSlider");
 
-
-			var numberOfDaysToSimulate = getSliderValue("daysToSimulateSlider");			
 			/* Note: this is where all of the magic happens, this method makes a simulator, steps through the sim, and returns html output */
-			var tableHTML = generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings);
-			el("simulationOutput").innerHTML = tableHTML;
+			el("simulationOutput").innerHTML = generateSimulationOutput(templateHTML, coronaSimSettings);
 			window.scrollBy(0, 200);
 		}
+
 
 		document.addEventListener('DOMContentLoaded', function() {			
 			//setup slider's onchange/oninput/initial label value
@@ -125,48 +134,72 @@
 						<input class='form-control' type="date" id="initialDate" required />
 					</div>
 					<div class="form-group col-md-6">
-						<label class="form-label">Initial Tested Cases</label>
-						<input class="form-control-range" id="initialCasesSlider" type="range" min="10" max="100000" value="25000" />
-					</div>
-				</div>
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<label class="form-label">New Cases Per Day</label>
-						<input class="form-control-range" id="newCasesPerDaySlider" type="range" min="1" max="100" value="25" format="percentage" />
-					</div>
-					<div class="form-group col-md-6">
 						<label class="form-label">Days To Simulate</label>
-						<input class="form-control-range" id="daysToSimulateSlider" type="range" min="10" max="1000" value="60" />
+						<input class="form-control-range" id="daysToSimulateSlider" type="range" min="10" max="1000" value="100" />
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-12">
-						<label class="form-label">Cases Resulting In Death</label>
-						<input class="form-control-range" id="casesResultingInDeathSlider" type="range" min="1" max="100" value="4" format="percentage" />
+					<div class="form-group col-md-6">
+						<label class="form-label">Initial Infections</label>
+						<input class="form-control-range" id="initialInfectionsSlider" type="range" min="10" max="100000" value="10" />
+					</div>
+					<div class="form-group col-md-6">
+						<label class="form-label">Infection Rate Per Day</label>
+						<input class="form-control-range" id="newInfectionsPercentSlider" type="range" min="1" max="1000" value="250" format="percentage" />
 					</div>					
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-12">
-						<label class="form-label">Cases Resulting In Hospitalization</label>
-						<input class="form-control-range" id="casesResultingInHospitalizationSlider" type="range" min="1" max="100" value="10" format="percentage" />
+					<div class="form-group col-md-6">
+						<label class="form-label">Infections Tested</label>
+						<input class="form-control-range" id="testPercentSlider" type="range" min="1" max="1000" value="1000" format="percentage" />
+					</div>
+					<div class="form-group col-md-6">
+						<label class="form-label">Positive Test Result Rate</label>
+						<input class="form-control-range" id="positiveTestResultPercentSlider" type="range" min="1" max="1000" value="200" format="percentage" />
+					</div>					
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label class="form-label">Positive Test Cases Resulting In Death</label>
+						<input class="form-control-range" id="caseDeathPercentSlider" type="range" min="1" max="1000" value="40" format="percentage" />
+					</div>					
+					<div class="form-group col-md-6">
+						<label class="form-label">Positive Test Cases Resulting In Hospitalization</label>
+						<input class="form-control-range" id="caseHospitalizationPercentSlider" type="range" min="1" max="1000" value="100" format="percentage" />
 					</div>
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-12">
 						<label class="form-label">Number Of Days In Hospital Per Hospitalization</label>
-						<input class="form-control-range" id="numberOfDaysHospitalizedSlider" type="range" min="1" max="30" value="3" />
+						<input class="form-control-range" id="numberOfDaysHospitalizedSlider" type="range" min="1" max="100" value="3" />
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-8">
 						<label class="form-label">Hospital Beds Available</label>
-						<input class="form-control-range" id="hospitalBedsAvailableSlider" type="range" min="1000" max="10000000" value="1000000" />
+						<input class="form-control-range" id="hospitalBedsAvailableSlider" type="range" min="1" max="999" value="1" scaleControl="hospitalBedsScale" />
+					</div>
+					<div class="form-group col-md-4">
+						<label class="form-label">Scale</label>
+						<select class='form-control' id="hospitalBedsScale" onchange="updateSliderLabel(el('hospitalBedsAvailableSlider'));">
+							<option>Thousand</option>
+							<option selected="selected">Million</option>
+							<option>Billion</option>
+						</select>
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-8">
 						<label class="form-label">Population Cap</label>
-						<input class="form-control-range" id="populationCapSlider" type="range" min="1000000" max="1000000000" value="330000000" />
+						<input class="form-control-range" id="populationCapSlider" type="range" min="1" max="999" value="330" scaleControl="populationCapScale" />
+					</div>
+					<div class="form-group col-md-4">
+						<label class="form-label">Scale</label>
+						<select class='form-control' id="populationCapScale" onchange="updateSliderLabel(el('populationCapSlider'));">
+							<option>Thousand</option>
+							<option  selected="selected">Million</option>
+							<option>Billion</option>
+						</select>
 					</div>
 				</div>
 				
