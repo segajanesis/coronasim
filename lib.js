@@ -7,7 +7,7 @@ var billion = million * 1000;
 var trillion = billion * 1000;
 
 function printDayShort(date) {
-	return months[date.getMonth()] + " " + date.getDate();
+	return months[date.getMonth()] + " " + date.getDate() + " '" + (date.getYear() % 100);
 }
 
 function printNumberShort(number) {
