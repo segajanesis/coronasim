@@ -14,17 +14,18 @@ class CoronaSimulator {
 
 	constructor(coronaSimSettings) {
 		this._coronaSimSettings = coronaSimSettings;	
-		this._currentDayInt = 0;
-		this._currentDayStats = new DayStats(this._currentDayInt, coronaSimSettings.initialInfectionsInt, coronaSimSettings);
+		this._currentDayStats = new DayStats(0, coronaSimSettings.initialInfectionsInt, coronaSimSettings);
 		this._dayStatsArray = [];
 		this._totalStats = new TotalStats();		
 		this._dayStatsArray.push(this._currentDayStats);
 		this._totalStats.addDayStats(this._currentDayStats);
+		this._currentDayInt = 1;
 
 		debug("CoronaSimulator created:", this);			
 	}
 
 	moveForwardOneDay() {
+		debug("Simulator moving forward one day.", this);
 		this._currentDayStats = new DayStats(this._currentDayInt, this._totalStats.totalInfectionsInt, this._coronaSimSettings);
 		this._dayStatsArray.push(this._currentDayStats);
 		this._totalStats.addDayStats(this._currentDayStats);

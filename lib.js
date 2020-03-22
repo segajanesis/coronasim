@@ -8,7 +8,7 @@ var trillion = billion * 1000;
 
 function printDayShort(date) {
 	var result = months[date.getUTCMonth()] + " " + date.getUTCDate() + " " + (date.getUTCFullYear());
-	debug("printDayShort: " + date + " -> " + result, null);
+	// debug("printDayShort: " + date + " -> " + result, null);
 	return result;
 }
 
@@ -37,7 +37,7 @@ function printNumberShort(number) {
 	} else {
 		result = number.toLocaleString();
 	}
-	debug("printNumberShort " + number.toLocaleString() + " -> " + result);
+	// debug("printNumberShort " + number.toLocaleString() + " -> " + result);
 	return result;
 }
 
@@ -74,8 +74,8 @@ function multiplyAndRound(numberInt, percentFloat) {
 	}
 	var result = (numberInt * 1.0) * ((percentFloat * 1.0) / 100.0);
 	var flooredResult = Math.floor(result);
-	debug("Result of multiply, numberInt: " + numberInt + ", percentFloat: " + percentFloat 
-		+ ", result: " + result + ", flooredResult: " + flooredResult);
+	// debug("Result of multiply, numberInt: " + numberInt + ", percentFloat: " + percentFloat 
+	// 	+ ", result: " + result + ", flooredResult: " + flooredResult);
 	return flooredResult;
 }
 
@@ -91,14 +91,14 @@ function getPercentage(currentValueInt, maxValueInt) {
 		return null;
 	}
 	var result = ((currentValueInt * 1.0) / (maxValueInt * 1.0) * 100.0);
-	debug("Result of percentage, currentValueInt: " + currentValueInt + ", maxValueInt: " + maxValueInt + ", result: " + result);
+	// debug("Result of percentage, currentValueInt: " + currentValueInt + ", maxValueInt: " + maxValueInt + ", result: " + result);
 	return Math.round(result);
 }
 
 function incrementDate(date, dayCountInt) {
 	var d = new Date(date.getTime());
 	d.setUTCDate(d.getUTCDate() + dayCountInt);
-	debug("Incremented date: " + date + " by " + dayCountInt + ": " + d);
+	// debug("Incremented date: " + date + " by " + dayCountInt + ": " + d);
 	return d;
 }
 
@@ -190,6 +190,12 @@ function generateSimulationOutput(template, coronaSimSettings) {
 	
 	var tableDataArray = [];
 
+	//add first day's stats
+	tableDataArray.push({
+		dayStats: simulator.currentDayStats,
+		totalStats: simulator.totalStats.copy(),
+		currentHospitalizedInt: simulator.hospitalizationsForDayInt(simulator.currentDayInt),
+	});
 	for (i = 0; i < coronaSimSettings.simulatonDaysInt; i++) {
 		simulator.moveForwardOneDay();				
 		tableDataArray.push({
@@ -203,7 +209,6 @@ function generateSimulationOutput(template, coronaSimSettings) {
 			break;
 		}
 	}
-
 	var html = "<div class='testResults'>\n";
 	for (var tableEntry of tableDataArray) {
 		html += populateTemplate(template, tableEntry.dayStats, tableEntry.totalStats, 

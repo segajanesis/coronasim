@@ -107,14 +107,14 @@ class TotalStats {
 	}
 
 	addDayStats(dayStats) {
-		debug("Total stats adding daystats.", { this:this, dayStats:dayStats });
+		debug("Total stats adding daystats.", { this:this.copy(), dayStats:dayStats });
 		this._totalDays += 1;
 		this._totalInfectionsInt += dayStats.infectionsInt;
 		this._totalTestedInt += dayStats.testedInt;
 		this._totalPositiveTestsInt += dayStats.positiveTestsInt;
 		this._totalHospitalizationsInt += dayStats.hospitalizationsInt;
 		this._totalDeathsInt += dayStats.deathsInt;
-		debug("Total stats state after adding.", { this:this, dayStats:dayStats });
+		debug("Total stats state after adding.", { this:this.copy(), dayStats:dayStats });
 	}
 
 	copy() {
