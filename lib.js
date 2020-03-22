@@ -102,7 +102,7 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 	//first day
 	tableDataArray.push({
 			dayInt: 0,
-			newCasesInt: coronaSimSettings.initialCaseCountInt,
+			newCasesInt: 0,
 			totalCasesInt: coronaSimSettings.initialCaseCountInt,
 			totalDeathsInt: 0,
 			currentHospitalizedInt: 0,
@@ -124,7 +124,7 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 	var html = "<table class='table'>\n";
 	html += "<thead>";
 	html += "<th>Day</th>";
-	html += "<th>New Cases</th>";
+	html += "<th>New Cases<br/>Today</th>";
 	html += "<th>Total<br/>Cases</th>";
 	html += "<th>Total<br/>Deaths</th>";
 	html += "<th>Currently<br/>Hospitalized</th>";
