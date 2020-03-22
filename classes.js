@@ -12,6 +12,7 @@ class CoronaSimSettings {
 		coronaSimSettings.percentCasesResultingInSurvivalInt
 		coronaSimSettings.numberOfHospitalBedsInt
 		coronaSimSettings.numberOfDaysHospitalizedInt
+		coronaSimSettings.populationCapInt
 	*/
 
 	get initialCaseCountInt() {
@@ -83,6 +84,14 @@ class CoronaSimSettings {
 
 	set numberOfDaysHospitalizedInt(x) {
 		this._numberOfDaysHospitalizedInt = x;
+	}
+
+	get populationCapInt() {
+		return this._populationCapInt;
+	}
+
+	set populationCapInt(x) {
+		this._populationCapInt = x;
 	}
 }
 

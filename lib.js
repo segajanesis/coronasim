@@ -131,8 +131,8 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 			bedsFreeInt: simulator.hospitalBedsAvailableIntForDay(simulator.currentDayInt)
 		});
 		var totalCases = simulator.totalStats.totalCasesInt;
-		if (totalCases > (7 * billion)) {
-			console.log("stopping simulation, more cases than people on earth: " + totalCases.toLocaleString());
+		if (totalCases > coronaSimSettings.populationCapInt) {
+			console.log("stopping simulation, hit population limit: " + totalCases.toLocaleString());
 			break;
 		}
 	}

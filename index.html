@@ -46,10 +46,11 @@
 			coronaSimSettings.percentCasesResultingInDeathInt = getSliderValue("casesResultingInDeathSlider");
 			coronaSimSettings.percentCasesResultingInSurvivalInt = 100 - coronaSimSettings.percentCasesResultingInDeathInt;
 			coronaSimSettings.numberOfHospitalBedsInt = getSliderValue("hospitalBedsAvailableSlider"); // 1 million			
-			coronaSimSettings.numberOfDaysHospitalizedInt = getSliderValue("numberOfDaysHospitalized");
+			coronaSimSettings.numberOfDaysHospitalizedInt = getSliderValue("numberOfDaysHospitalizedSlider");
+			coronaSimSettings.populationCapInt = getSliderValue("populationCapSlider");
 
 
-			var numberOfDaysToSimulate = getSliderValue("daysToSimulate");			
+			var numberOfDaysToSimulate = getSliderValue("daysToSimulateSlider");			
 			/* Note: this is where all of the magic happens, this method makes a simulator, steps through the sim, and returns html output */
 			var tableHTML = generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings);
 			document.getElementById("simulationOutput").innerHTML = tableHTML;
@@ -116,7 +117,7 @@
 				<div class="form-row">
 					<div class="form-group col-md-12">
 						<label class="form-label">Days To Simulate</label>
-						<input class="form-control-range" id="daysToSimulate" type="range" min="10" max="1000" value="60" />
+						<input class="form-control-range" id="daysToSimulateSlider" type="range" min="10" max="1000" value="60" />
 					</div>
 				</div>
 				<div class="form-row">
@@ -140,7 +141,7 @@
 				<div class="form-row">
 					<div class="form-group col-md-12">
 						<label class="form-label">Number Of Days In Hospital Per Hospitalization</label>
-						<input class="form-control-range" id="numberOfDaysHospitalized" type="range" min="1" max="30" value="3" />
+						<input class="form-control-range" id="numberOfDaysHospitalizedSlider" type="range" min="1" max="30" value="3" />
 					</div>
 				</div>
 				<div class="form-row">
@@ -149,6 +150,13 @@
 						<input class="form-control-range" id="hospitalBedsAvailableSlider" type="range" min="1000" max="10000000" value="1000000" />
 					</div>
 				</div>
+				<div class="form-row">
+					<div class="form-group col-md-12">
+						<label class="form-label">Population Cap</label>
+						<input class="form-control-range" id="populationCapSlider" type="range" min="1000000" max="1000000000" value="330000000" />
+					</div>
+				</div>
+				
 				<div class="form-row">
 					<button class="btn btn-primary" onClick="runSimulation()">Run Simulation</button>
 				</div>
