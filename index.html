@@ -384,27 +384,50 @@
 			debugMode = true;
 
 			var coronaSimSettings = new CoronaSimSettings();
-			coronaSimSettings.initialCaseCountOnDayOneInt = 10;
+			coronaSimSettings.initialCaseCountOnDayOneInt = getSliderValue("initialCasesSlider");
 			coronaSimSettings.initialDate = new Date();
-			coronaSimSettings.percentNewCasesPerDayInt = 10; // 10%
-			coronaSimSettings.percentCasesResultingInHospitalizationInt = 20; // 20%
-			coronaSimSettings.percentCasesResultingInDeathInt = 10; // 10%
-			coronaSimSettings.percentCasesResultingInSurvivalInt = 90; // 90%
+			coronaSimSettings.percentNewCasesPerDayInt = getSliderValue("newCasesPerDaySlider"); 
+			coronaSimSettings.percentCasesResultingInHospitalizationInt = getSliderValue("casesResultingInHospitalizationSlider");
+			coronaSimSettings.percentCasesResultingInDeathInt = getSliderValue("casesResultingInDeathSlider");
+			coronaSimSettings.percentCasesResultingInSurvivalInt = 100 - coronaSimSettings.percentCasesResultingInDeathInt;
 			coronaSimSettings.numberOfVentilatorsInt = 10 * 1000; // 10,000
-			coronaSimSettings.numberOfHospitalBedsInt = 1000 * 1000; // 1 million
-			coronaSimSettings.numberOfDaysHospitalizedInt = 3;
+			coronaSimSettings.numberOfHospitalBedsInt = getSliderValue("hospitalBedsAvailableSlider"); // 1 million			
+			coronaSimSettings.numberOfDaysHospitalizedInt = getSliderValue("numberOfDaysHospitalized");
 
 			var simulator = new CoronaSimulator(coronaSimSettings);
 
-			for (i = 0; i < 100; i++) {
+			var numberOfDaysToSimulate = getSliderValue("daysToSimulate");
+			for (i = 0; i < numberOfDaysToSimulate; i++) {
 				simulator.moveForwardOneDay();				
 			}
 		}
 
 		document.addEventListener('DOMContentLoaded', function() {			
-			runSimulation();
+			// runSimulation();
+			for (var slider of document.getElementsByClassName("form-control-range")) {
+				slider.onchange = function() { updateSliderLabel(this); }
+				slider.oninput = slider.onchange;
+				updateSliderLabel(slider);
+			}
 		}, false);
 
+		function getSliderValue(sliderId) {
+			return document.getElementById(sliderId).valueAsNumber;
+		}
+
+		function updateSliderLabel(slider) {
+			var valueAsNumber = slider.valueAsNumber;
+			var text = slider.previousElementSibling.innerText;
+			if (text.indexOf(" [") != -1) {
+				text = text.substr(0, text.indexOf(" ["));
+			}
+			text += " [" + slider.valueAsNumber.toLocaleString() 
+			if (slider.getAttribute("format") == "percentage") {
+				text += "%";
+			}
+			text += "]";
+			slider.previousElementSibling.innerText = text;
+		}
 
 		/* 
 			MVP TODO LIST:
@@ -434,23 +457,46 @@
 		<p>This is a dynamic simulator built to help citizens understand hospital resource exhaustion.</p>
 	</div>
 
-	<!--
-	-->
-
-	<div class='section'>
-		<h3>Disclaimer</h3>
-
-		<p>Jason is not a trained scientist or doctor. This page is not an authority on <strong>anything</strong>, it's simply a collection of information that Jason hopes you might find useful. Do your own research. Listen to the <a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019">WHO</a>, the <a href="https://www.cdc.gov/coronavirus/2019-nCoV/index.html">CDC</a>, and be safe.</p>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label class="form-label">Initial Cases</label>
+			<input class="form-control-range" id="initialCasesSlider" type="range" min="10" max="100000" value="10" />
+		</div>
+		<div class="form-group col-md-6">
+			<label class="form-label">Days To Simulate</label>
+			<input class="form-control-range" id="daysToSimulate" type="range" min="30" max="1000" value="30" />
+		</div>
 	</div>
-	
-	<div class='section' id='essentialResources' /></div>	
-	<div class='section' id="help"></div>		
-	<div class='section' id="regionalResources"></div>
-	<div class='section' id="data"></div>
-	<div class='section' id='survivalGuide' /></div>
-	<div class='section' id='jobs' /></div>	
-	<div class='section' id="newsSources"></div>
-	<div class='section' id="meta"></div>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label class="form-label">New Cases Per Day</label>
+			<input class="form-control-range" id="newCasesPerDaySlider" type="range" min="1" max="100" value="10" format="percentage" />
+		</div>
+		<div class="form-group col-md-6">
+			<label class="form-label">Cases Resulting In Death</label>
+			<input class="form-control-range" id="casesResultingInDeathSlider" type="range" min="1" max="100" value="10" format="percentage" />
+		</div>
+		
+	</div>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label class="form-label">Cases Resulting In Hospitalization</label>
+			<input class="form-control-range" id="casesResultingInHospitalizationSlider" type="range" min="1" max="100" value="10" format="percentage" />
+		</div>
+		<div class="form-group col-md-6">
+			<label class="form-label">Number Of Days In Hospital Per Hospitalization</label>
+			<input class="form-control-range" id="numberOfDaysHospitalized" type="range" min="1" max="30" value="3" />
+		</div>
+	</div>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label class="form-label">Hospital Beds Available</label>
+			<input class="form-control-range" id="hospitalBedsAvailableSlider" type="range" min="1000" max="5000000" value="10" />
+		</div>
+	</div>
+	<div class="form-row">
+		<button class="btn btn-primary" onClick="runSimulation()">Run Simulation</button>
+	</div>
 </div>
 
 
