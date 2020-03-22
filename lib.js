@@ -143,18 +143,14 @@ function populateTemplate(template, dayStats, totalStats, currentHospitalizedInt
 
 	var rowDate = incrementDate(coronaSimSettings.initialDate, dayStats.dayNumberInt);
 	value = "#" + dayStats.dayNumberInt + ": "  + printDayShort(rowDate);
-	console.log(templateCopy);
-	console.log("value:" + value);
 	templateCopy = templateCopy.replace("${day}", value);
 
-	value = "" + printNumberShort(totalStats.totalInfectionsInt) + " total, ";
 	percentage = " (" + getPercentage(dayStats.infectionsInt, totalStats.totalInfectionsInt) + "%)";
-	value += printNumberShort(dayStats.infectionsInt) + percentage + " new today.";
+	value = "" + printNumberShort(dayStats.infectionsInt) + percentage + " new today.";
 	templateCopy = templateCopy.replace("${infections}", value);
 
-	value = "" + printNumberShort(totalStats.totalTestedInt) + " total, ";
 	percentage = " (" + getPercentage(dayStats.testedInt, totalStats.totalTestedInt) + "%)";
-	value += printNumberShort(dayStats.testedInt) + percentage + " new today.";
+	value = "" + printNumberShort(dayStats.testedInt) + percentage + " new today.";
 	templateCopy = templateCopy.replace("${testResults}", value);
 
 	var bedsUsed = currentHospitalizedInt;
