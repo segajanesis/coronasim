@@ -127,7 +127,7 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 	html += "<th>New Cases<br/>Today</th>";
 	html += "<th>Total<br/>Cases</th>";
 	html += "<th>Total<br/>Deaths</th>";
-	html += "<th>Currently<br/>Hospitalized</th>";
+	html += "<th>Beds Used</th>";
 	html += "<th>Beds Free</th>";
 	html += "</thead>\n";
 	html += "<tbody>\n";
