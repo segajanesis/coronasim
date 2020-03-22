@@ -115,7 +115,7 @@ function generateSimulationTable(numberOfDaysToSimulate, coronaSimSettings) {
 			dayInt: 0,
 			newCasesInt: 0,
 			totalCasesInt: coronaSimSettings.initialCaseCountInt,
-			totalDeathsInt: 0,
+			totalDeathsInt: simulator.initialDeathCount,
 			currentHospitalizedInt: 0,
 			bedsFreeInt: coronaSimSettings.numberOfHospitalBedsInt
 	});

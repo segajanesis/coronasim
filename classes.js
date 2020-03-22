@@ -117,7 +117,6 @@ class DayStats {
 		this._numberOfCasesInt = dayBeforeCaseCount + this._numberOfNewCasesInt;
 		this._numberOfCasesInHospitalInt = multiplyAndRound(this._numberOfNewCasesInt, coronaSimSettings.percentCasesResultingInHospitalizationInt);
 		this._numberOfCasesResultingInDeathInt = multiplyAndRound(this._numberOfNewCasesInt, coronaSimSettings.percentCasesResultingInDeathInt);
-		this._numberOfCasesResultingInSurvivalInt = multiplyAndRound(this._numberOfNewCasesInt, coronaSimSettings.percentCasesResultingInSurvivalInt);
 		debug("DayStats created. dayNumberInt: " + dayNumberInt + ", dayBeforeCaseCount: " 
 			+ dayBeforeCaseCount + ", coronaSimSettings: ", this);
 	}
@@ -149,10 +148,6 @@ class DayStats {
 	get numberOfCasesResultingInDeathInt() {
 		return this._numberOfCasesResultingInDeathInt;
 	}
-
-	get numberOfCasesResultingInSurvivalInt() {
-		return this._numberOfCasesResultingInSurvivalInt;
-	}
 }
 
 class TotalStats {
@@ -163,14 +158,12 @@ class TotalStats {
 		totalStats.totalCasesInt
 		totalStats.totalHospitalizationsInt
 		totalStats.totalDeathsInt
-		totalStats.totalSurvivalsInt
 	*/
 
-	constructor(initialTotalCaseCount) {
-		this._totalCasesInt = initialTotalCaseCount;
+	constructor(initialTotalCaseCountInt, initialTotalDeathsCountInt) {
+		this._totalCasesInt = initialTotalCaseCountInt;
 		this._totalHospitalizationsInt = 0;
-		this._totalDeathsInt = 0;
-		this._totalSurvivalsInt = 0;
+		this._totalDeathsInt = initialTotalDeathsCountInt;
 	}
 
 	addDayStats(dayStats) {
@@ -179,7 +172,6 @@ class TotalStats {
 		this._totalCasesInt += dayStats.numberOfNewCasesInt;
 		this._totalHospitalizationsInt += dayStats.numberOfCasesInHospitalInt;
 		this._totalDeathsInt += dayStats.numberOfCasesResultingInDeathInt;
-		this._totalSurvivalsInt += dayStats.numberOfCasesResultingInSurvivalInt;
 		debug("Total stats state after adding daystats:", this);
 	}
 

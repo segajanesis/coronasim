@@ -14,8 +14,9 @@ class CoronaSimulator {
 		this._coronaSimSettings = coronaSimSettings;	
 		this._currentDayInt = 0;
 		this._currentDayStats = null;
-		this._dayStatsArray = []; //all day stats so far				
-		this._totalStats = new TotalStats(coronaSimSettings.initialCaseCountInt);
+		this._dayStatsArray = []; //all day stats so far		
+		this._initialDeathCount = multiplyAndRound(coronaSimSettings.initialCaseCountInt, coronaSimSettings.percentCasesResultingInDeathInt);
+		this._totalStats = new TotalStats(coronaSimSettings.initialCaseCountInt, this._initialDeathCount);
 		debug("CoronaSimulator created:", this);			
 	}
 
@@ -30,7 +31,6 @@ class CoronaSimulator {
 			message += "\tTotal totalCasesInt: " + totalStats.totalCasesInt.toLocaleString() + "\n";
 			message += "\tTotal totalHospitalizationsInt: " + totalStats.totalHospitalizationsInt.toLocaleString() + "\n";
 			message += "\tTotal totalDeathsInt: " + totalStats.totalDeathsInt.toLocaleString() + "\n";
-			message += "\tTotal totalSurvivalsInt: " + totalStats.totalSurvivalsInt.toLocaleString() + "\n";
 			var dayStats = this._currentDayStats;
 			message += "\tLatest Day dayNumberInt: " + dayStats.dayNumberInt + "\n";
 			message += "\tLatest Day finalHospitalDayNumberInt: " + dayStats.finalHospitalDayNumberInt + "\n";
@@ -38,13 +38,16 @@ class CoronaSimulator {
 			message += "\tLatest Day numberOfNewCasesInt: " + dayStats.numberOfNewCasesInt.toLocaleString() + "\n";
 			message += "\tLatest Day numberOfCasesInHospitalInt: " + dayStats.numberOfCasesInHospitalInt.toLocaleString() + "\n";
 			message += "\tLatest Day numberOfCasesResultingInDeathInt: " + dayStats.numberOfCasesResultingInDeathInt.toLocaleString() + "\n";
-			message += "\tLatest Day numberOfCasesResultingInSurvivalInt: " + dayStats.numberOfCasesResultingInSurvivalInt.toLocaleString() + "\n";
 			message += "\tTotal Number of hospital beds: " + this._coronaSimSettings.numberOfHospitalBedsInt.toLocaleString() + "\n";
 			message += "\tCurrent hospital cases: " + this.hospitalizationCountIntForDay(this._currentDayInt).toLocaleString() + "\n";
 			message += "\tCurrent beds free: " + this.hospitalBedsAvailableIntForDay(this._currentDayInt).toLocaleString() + "\n";
 			debug(message, this);	
 		}
-	}			
+	}		
+
+	get initialDeathCount() {
+		return this._initialDeathCount;
+	}	
 
 	get currentDayStats() {
 		return this._currentDayStats;
