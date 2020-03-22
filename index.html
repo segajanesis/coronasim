@@ -26,46 +26,65 @@
 		.section { margin-bottom:1rem; border-top:1px solid rgba(0,0,0,0.15); padding-top:1rem; }
 	</style>
 
-	<script>
-		function loadDoc(divId, docName) {
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					var contents = this.responseText;
-					if (docName.endsWith(".md")) {
-						contents = markdown.toHTML(contents);
-					}
-					console.log("loaded " + docName + " for div '" + divId + "'");
-					document.getElementById(divId).innerHTML = contents;
+	<script>		
+		var debugMode = false;
+
+		function debug(message, details) {
+			if (debugMode) {
+				if (details == null) {
+					console.log(message);
+				} else {
+					console.log(message, details);
 				}
-			};
-			xhttp.open("GET", docName, true);
-			xhttp.send();
+			}
 		}
 
-		document.addEventListener('DOMContentLoaded', function() {			
-			loadDoc("essentialResources", "essential resources.html");
-			loadDoc("regionalResources", "regional resources.html");
-			loadDoc("survivalGuide", "survival guide.html");
-			loadDoc("data", "data.md");
-			loadDoc("help", "help.md");
-			loadDoc("jobs", "jobs.html");
-			loadDoc("newsSources", "news sources.html");			
-			loadDoc("meta", "meta.html");
-		}, false);
+		//from: https://stackoverflow.com/questions/3885817/how-do-i-check-that-a-number-is-Int-or-integer
+		function isInteger(x) { 
+			return typeof x === "number" && isFinite(x) && Math.floor(x) === x; 
+		}
+		//from: https://stackoverflow.com/questions/3885817/how-do-i-check-that-a-number-is-Int-or-integer
+		function isInt(x) { 
+			return !!(x % 1); 
+		}
+
+		/* numberInt = 100, percentInt = 25 (ie 25%), answer = 25 */
+		function multiplyAndRound(numberInt, percentInt) {
+			if (!isInteger(numberInt)) {
+				console.log("multiplyAndRound error, numberInt is not an integer:" + numberInt);
+				return null;
+			}
+			if (!isInteger(percentInt)) {
+				console.log("multiplyAndRound error, percentInt is not an integer:" + percentInt);
+				return null;
+			}
+			var result = (numberInt * 1.0) * (percentInt / 100.0);
+			result = Math.round(result);
+			debug("Result of multiply, numberInt: " + numberInt + ", percentInt: " + percentInt + ", result: " + result);
+			return result;
+		}
+
+		function incrementDate(date, dayCountInt) {
+			var d = new Date(date.getTime());
+			d.setDate(d.getDate() + dayCountInt);
+			return d;
+		}
 
 		/* js class reference: https://www.w3schools.com/js/js_classes.asp */
 		class CoronaSimSettings {
 
 			/*
-				settings.initialCaseCountOnDayOneInt
-				settings.percentNewCasesPerDayFloat
-				settings.percentCasesResultingInHospitalizationFloat
-				settings.percentCasesResultingInDeathFloat
-				settings.percentCasesResultingInSurvivalFloat
-				settings.numberOfVentilatorsInt
-				settings.numberOfHospitalBedsInt
-				settings.numberOfDaysHospitalizedInt
+				fields: 
+
+				coronaSimSettings.initialCaseCountOnDayOneInt
+				coronaSimSettings.initialDate
+				coronaSimSettings.percentNewCasesPerDayInt
+				coronaSimSettings.percentCasesResultingInHospitalizationInt
+				coronaSimSettings.percentCasesResultingInDeathInt
+				coronaSimSettings.percentCasesResultingInSurvivalInt
+				coronaSimSettings.numberOfVentilatorsInt
+				coronaSimSettings.numberOfHospitalBedsInt
+				coronaSimSettings.numberOfDaysHospitalizedInt
 			*/
 
 			get initialCaseCountOnDayOneInt() {
@@ -76,6 +95,14 @@
 				this._initialCaseCountOnDayOneInt = x;
 			}
 
+			get initialDate() {
+				return this._initialDate;
+			}
+
+			set initialDate(x) {
+				this._initialDate = x;
+			}
+
 			/* 
 				This is the number we use to multiple and determine the new cases per day.
 
@@ -83,36 +110,36 @@
 				is 100 cases, then the new cases on day two would be 100 cases multiplied by 
 				this percentage: 100 * 0.10f = 10. 
 			*/
-			get percentNewCasesPerDayFloat() {
-				return this._percentageNewCasesPerDayFloat;
+			get percentNewCasesPerDayInt() {
+				return this._percentageNewCasesPerDayInt;
 			}
 
-			set percentNewCasesPerDayFloat(x) {
-				this._percentageNewCasesPerDayFloat = x;
+			set percentNewCasesPerDayInt(x) {
+				this._percentageNewCasesPerDayInt = x;
 			}
 
-			get percentCasesResultingInHospitalizationFloat() {
-				return this._percentCasesResultingInHospitalizationFloat;
+			get percentCasesResultingInHospitalizationInt() {
+				return this._percentCasesResultingInHospitalizationInt;
 			}
 
-			set percentCasesResultingInHospitalizationFloat(x) {
-				this._percentCasesResultingInHospitalizationFloat = x;
+			set percentCasesResultingInHospitalizationInt(x) {
+				this._percentCasesResultingInHospitalizationInt = x;
 			}
 
-			get percentCasesResultingInDeathFloat() {
-				return this._percentCasesResultingInDeathFloat;
+			get percentCasesResultingInDeathInt() {
+				return this._percentCasesResultingInDeathInt;
 			}
 
-			set percentCasesResultingInDeathFloat(x) {
-				return this._percentCasesResultingInDeathFloat = x;
+			set percentCasesResultingInDeathInt(x) {
+				return this._percentCasesResultingInDeathInt = x;
 			}
 
-			get percentCasesResultingInSurvivalFloat() {
-				return this._percentCasesResultingInSurvivalFloat;
+			get percentCasesResultingInSurvivalInt() {
+				return this._percentCasesResultingInSurvivalInt;
 			}
 
-			set percentCasesResultingInSurvivalFloat(x) {
-				this._percentCasesResultingInSurvivalFloat = x;
+			set percentCasesResultingInSurvivalInt(x) {
+				this._percentCasesResultingInSurvivalInt = x;
 			}
 
 			get numberOfVentilatorsInt() {
@@ -140,9 +167,11 @@
 			}
 		}
 
-		class DayCaseStats {
+		class DayStats {
 
 			/*
+				fields: 
+
 				dayStats.dayNumberInt
 				dayStats.finalHospitalDayNumberInt
 				dayStats.numberOfCasesInt
@@ -151,156 +180,245 @@
 				dayStats.numberOfCasesResultingInSurvivalInt
 			*/
 
-			/* numberInt = 100, percentFloat = 0.25f, answer = 25 */
-			multiply(numberInt, percentFloat) {
-				//FIXME this doesn't do anything right now!
-			}
-
 			constructor(dayNumberInt, dayBeforeCaseCount, coronaSimSettings) {
 				this._dayNumberInt = dayNumberInt;
+				this._dayNumberDate = incrementDate(coronaSimSettings.initialDate, dayNumberInt);
 				this._finalHospitalDayNumberInt = this._dayNumberInt + coronaSimSettings.numberOfDaysHospitalizedInt;
-				this._numberOfCasesInt = dayBeforeCaseCount + multiply(dayBeforeCaseCount, coronaSimSettings.percentNewCasesPerDayFloat);
-				this._numberOfCasesInHospitalInt = this._numberOfCasesInt 
-					+ multiply(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInHospitalizationFloat);
-				this._numberOfCasesResultingInDeathInt = this._numberOfCasesInt 
-					+ multiply(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInDeathFloat);
-				this._numberOfCasesResultingInSurvivalInt = this._numberOfCasesInt 
-					+ multiply(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInSurvivalFloat);
+				this._numberOfCasesInt = dayBeforeCaseCount + multiplyAndRound(dayBeforeCaseCount, coronaSimSettings.percentNewCasesPerDayInt);
+				this._numberOfCasesInHospitalInt = multiplyAndRound(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInHospitalizationInt);
+				this._numberOfCasesResultingInDeathInt = multiplyAndRound(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInDeathInt);
+				this._numberOfCasesResultingInSurvivalInt = multiplyAndRound(this._numberOfCasesInt, coronaSimSettings.percentCasesResultingInSurvivalInt);
+				debug("DayStats created. dayNumberInt: " + dayNumberInt + ", dayBeforeCaseCount: " 
+					+ dayBeforeCaseCount + ", coronaSimSettings: ", this);
+			}
+
+			get dayNumberDate() {
+				return this._dayNumberDate;
+			}
+
+			set dayNumberDate(x) {
+				this._dayNumberDate = x;
 			}
 
 			get dayNumberInt() {
 				return this._dayNumberInt;
 			}
+
 			set dayNumberInt(x) {
 				this._dayNumberInt = x;
 			}
+
 			get finalHospitalDayNumberInt() {
 				return this._finalHospitalDayNumberInt;
 			}
+
 			set finalHospitalDayNumberInt(x) {
 				this._finalHospitalDayNumberInt = x;
 			}
+
 			get numberOfCasesInt() {
 				return this._numberOfCasesInt;
 			}
+
 			set numberOfCasesInt(x) {
 				this._numberOfCasesInt = x;
 			}
+
 			get numberOfCasesInHospitalInt() {
-				return this._numberOfCasesInHospitalInt;
+				return this._numberOfCasesInHospitalInt;			
 			}
+
 			set numberOfCasesInHospitalInt(x) {
 				this._numberOfCasesInHospitalInt = x;
 			}
+
 			get numberOfCasesResultingInDeathInt() {
 				return this._numberOfCasesResultingInDeathInt;
 			}
+
 			set numberOfCasesResultingInDeathInt(x) {
 				this._numberOfCasesResultingInDeathInt = x;
 			}
+
 			get numberOfCasesResultingInSurvivalInt() {
 				return this._numberOfCasesResultingInSurvivalInt;
 			}
+
 			set numberOfCasesResultingInSurvivalInt(x) {
 				this._numberOfCasesResultingInSurvivalInt = x;
 			}
 		}
 
-		class TotalCaseStats {
-			constructor(dayCaseStatsArray) {
+		class TotalStats {
+
+			/*
+				fields: 
+
+				totalStats.totalCasesInt
+				totalStats.totalHospitalizationsInt
+				totalStats.totalDeathsInt
+				totalStats.totalSurvivalsInt
+			*/
+
+			constructor() {
 				this._totalCasesInt = 0;
 				this._totalHospitalizationsInt = 0;
 				this._totalDeathsInt = 0;
-				//FIXME: pseudocode, i can never rememner the forin syntax for JS
-				for (DayCaseStats dayCaseStats : dailyCaseStatsArray) {
-					this._totalCases += dayCaseStats.numberOfCasesInt;
-					this._totalHospitalizationsInt += dayCaseStats.numberOfCasesInHospitalInt;
-					this._totalDeathsInt += dayCaseStats.numberOfCasesResultingInDeathInt;
-					this._totalSurvivalsInt += dayCaseStats.numberOfCasesResultingInSurvivalInt;
-				}
+				this._totalSurvivalsInt = 0;
 			}
 
-			get totalCasesInt {
+			addDayStats(dayStats) {
+				debug("Total stats adding daystats:", dayStats);
+				debug("Total stats state before adding daystats:", this);
+				this._totalCasesInt += dayStats.numberOfCasesInt;
+				this._totalHospitalizationsInt += dayStats.numberOfCasesInHospitalInt;
+				this._totalDeathsInt += dayStats.numberOfCasesResultingInDeathInt;
+				this._totalSurvivalsInt += dayStats.numberOfCasesResultingInSurvivalInt;
+				debug("Total stats state after adding daystats:", this);
+			}
+
+			get totalCasesInt() {
 				return this._totalCasesInt;
 			}
 
-			get totalHospitalizationsInt {
+			get totalHospitalizationsInt() {
 				return this._totalHospitalizationsInt;
 			}
 
-			get totalDeathsInt {
+			get totalDeathsInt() {
 				return this._totalDeathsInt;
 			}
 
-			get totalSurvivalsInt {
+			get totalSurvivalsInt() {
 				return this._totalSurvivalsInt;
 			}
 		}
 
+
 		class CoronaSimulator {
-			constructor(coronaSimSettings, debugBool) {
-				this._currentCaseCountInt = settings.initialCaseCountOnDayOneInt;
-				this._currentDayInt = 0;
-				this._debugBool = debugBool;
+			constructor(coronaSimSettings) {
 				this._coronaSimSettings = coronaSimSettings;	
-				this._dayStatsArray = []; //all day stats so far
-				this._currentHospitalizedDayStatsArray = [] // all day stats that aren't yet expired
-				this._totalCaseStats = new TotalCaseStats(this.__dayStatsArray);
-				debug("CoronaSimulator created, settings:", this._coronaSimSettings);			
+				this._currentCaseCountInt = coronaSimSettings.initialCaseCountOnDayOneInt;
+				this._currentDayInt = 0;
+				this._currentDayStats = null;
+				this._dayStatsArray = []; //all day stats so far				
+				this._totalStats = new TotalStats();
+				debug("CoronaSimulator created:", this);			
 			}
 
 			moveForwardOneDay() {
+				this._currentDayStats = new DayStats(this._currentDayInt, this._currentCaseCountInt, this._coronaSimSettings);
+				this._dayStatsArray.push(this._currentDayStats);
+				this._totalStats.addDayStats(this._currentDayStats);
+				this._currentCaseCountInt = this._currentDayStats.numberOfCasesInt;
 				this._currentDayInt += 1;
-				var dayStats = new DayCaseStats(this._currentDayInt, this._currentCaseCount, this._coronaSimSettings);
-				this._dayStatsArray.push(dayStats); //FIXME: method sig
-				this._currentHospitalizedDayStatsArray.push(dayStats); //FIXME: method sig
-				this._currentCaseCountInt = dayStats.numberOfCasesInt;
-
-				//drop any hospital stats that aren't valid anymore
-				var tmpCurrentHospitalDayStatsArray = [];
-				this._totalCurrentHospitalizationsInt = 0;
-				for (var dayStats : this._currentHospitalizedDayStatsArray) { //FIXME: syntax
-					if (dayStats.finalHospitalDayNumberInt >= this._currentDayInt) {
-						tmpCurrentHospitalDayStatsArray.push(dayStats); //FIXME: method sig
-						this._totalCurrentHospitalizationsInt += dayStats.numberOfCasesInHospitalInt;
-					}
+				if (debugMode) {
+					var message = "Sim moved one day forward. Current day: " + this._currentDayInt + " (" + this.currentDayDate + ")\n";
+					var totalStats = this._totalStats;
+					message += "\tTotal totalCasesInt: " + totalStats.totalCasesInt.toLocaleString() + "\n";
+					message += "\tTotal totalHospitalizationsInt: " + totalStats.totalHospitalizationsInt.toLocaleString() + "\n";
+					message += "\tTotal totalDeathsInt: " + totalStats.totalDeathsInt.toLocaleString() + "\n";
+					message += "\tTotal totalSurvivalsInt: " + totalStats.totalSurvivalsInt.toLocaleString() + "\n";
+					var dayStats = this._currentDayStats;
+					message += "\tLatest Day dayNumberInt: " + dayStats.dayNumberInt + "\n";
+					message += "\tLatest Day finalHospitalDayNumberInt: " + dayStats.finalHospitalDayNumberInt + "\n";
+					message += "\tLatest Day numberOfCasesInt: " + dayStats.numberOfCasesInt.toLocaleString() + "\n";
+					message += "\tLatest Day numberOfCasesInHospitalInt: " + dayStats.numberOfCasesInHospitalInt.toLocaleString() + "\n";
+					message += "\tLatest Day numberOfCasesResultingInDeathInt: " + dayStats.numberOfCasesResultingInDeathInt.toLocaleString() + "\n";
+					message += "\tLatest Day numberOfCasesResultingInSurvivalInt: " + dayStats.numberOfCasesResultingInSurvivalInt.toLocaleString() + "\n";
+					message += "\tTotal Number of hospital beds: " + this._coronaSimSettings.numberOfHospitalBedsInt.toLocaleString() + "\n";
+					message += "\tCurrent hospital cases: " + this.hospitalizationCountIntForDay(this._currentDayInt).toLocaleString() + "\n";
+					message += "\tCurrent beds free: " + this.hospitalBedsAvailableIntForDay(this._currentDayInt).toLocaleString() + "\n";
+					debug(message, this);	
 				}
-				this._currentHospitalizedDayStatsArray = tmpCurrentHospitalDayStatsArray;
-				this._t
+			}			
 
+			get currentCaseCountInt() {
+				return this._currentCaseCountInt;	
 			}
 
+			get currentDayStats() {
+				return this._currentDayStats;
+			}
 
+			get currentDayInt() {
+				return this._currentDayInt;	
+			}
 
-			debug(message, details) {
-				if (this._debugBool) {
-					if (details == null) {
-						console.log(message);
-					} else {
-						console.log(message, details);
+			get currentDayDate() {
+				return incrementDate(this._coronaSimSettings.initialDate, (this._currentDayInt - 1));
+			}
+
+			get coronaSimSettings() {
+				return this._coronaSimSettings;	
+			}
+
+			get dayStatsArray() {
+				return this._dayStatsArray;	
+			}
+
+			get currentHospitalizedDayStatsArray() {
+				return this._currentHospitalizedDayStatsArray;	
+			}
+
+			get totalStats() {
+				return this._totalStats;	
+			}	
+
+			hospitalizationCountIntForDay(dayNumberInt) {
+				var hospitalizationCountInt = 0;
+				for (var dayStats of this._dayStatsArray) {
+					if (dayStats.dayNumberInt <= dayNumberInt && dayStats.finalHospitalDayNumberInt >= dayNumberInt) {
+						hospitalizationCountInt += dayStats.numberOfCasesInHospitalInt;
 					}
 				}
+				return hospitalizationCountInt;
+			}
+
+			hospitalBedsAvailableIntForDay(dayNumberInt) {
+				return this._coronaSimSettings.numberOfHospitalBedsInt - this.hospitalizationCountIntForDay(dayNumberInt);
+			}					
+		}
+
+		function runSimulation() {
+			debugMode = true;
+
+			var coronaSimSettings = new CoronaSimSettings();
+			coronaSimSettings.initialCaseCountOnDayOneInt = 10;
+			coronaSimSettings.initialDate = new Date();
+			coronaSimSettings.percentNewCasesPerDayInt = 10; // 10%
+			coronaSimSettings.percentCasesResultingInHospitalizationInt = 20; // 20%
+			coronaSimSettings.percentCasesResultingInDeathInt = 10; // 10%
+			coronaSimSettings.percentCasesResultingInSurvivalInt = 90; // 90%
+			coronaSimSettings.numberOfVentilatorsInt = 10 * 1000; // 10,000
+			coronaSimSettings.numberOfHospitalBedsInt = 1000 * 1000; // 1 million
+			coronaSimSettings.numberOfDaysHospitalizedInt = 3;
+
+			var simulator = new CoronaSimulator(coronaSimSettings);
+
+			for (i = 0; i < 100; i++) {
+				simulator.moveForwardOneDay();				
 			}
 		}
+
+		document.addEventListener('DOMContentLoaded', function() {			
+			runSimulation();
+		}, false);
 
 
 		/* 
 			MVP TODO LIST:
-				* Variable: number of cases to start with
-				* Variable: percentage of cases that result in survival
-				* Variable: number of days patient stays in a hospital
-				* Variable: number of hospital beds
-				* Variable: number of ventilators
-				* Show graph
+				* Add graph lib
+				* Populate graph
+				* Show table of data
+				* Make sliders
 				* Find example starter data, link to sources as much as possible
 				* Need to source data: 
 
 			FUTURE FEATURES:
-				* Show table of data
 				* allow users to see data for their city, different countries
 				* how do numbers change if we can add ventilators every day?
-
-
+				* how do numbers change if we can add beds every day?
 		*/
 
 	</script>
