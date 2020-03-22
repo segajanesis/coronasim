@@ -73,6 +73,8 @@
 			/* Note: this is where all of the magic happens, this method makes a simulator, steps through the sim, and returns html output */
 			el("simulationOutput").innerHTML = generateSimulationOutput(templateHTML, coronaSimSettings);
 			window.scrollBy(0, 200);
+
+			console.log("blah ${day}".replace("${day}", "test"));
 		}
 
 

@@ -33,11 +33,11 @@ class CoronaSimSettings {
 	set initialDate(x) { this._initialDate = x; }
 	set simulatonDaysInt(x) { this._simulatonDaysInt = x; }
 	set initialInfectionsInt(x) { this._initialInfectionsInt = x; }
-	set infectionDailyIncreasePercentFloat(x) { this._infectionDailyIncreasePercentFloat = x; }
-	set testPercentFloat(x) { this._testPercentFloat = x; }
-	set positiveTestResultPercentFloat(x) { this._positiveTestResultPercentFloat = x; }
-	set positiveCaseDeathPercentFloat(x) { this._positiveCaseDeathPercentFloat = x; }
-	set positiveCaseHospitalizedPercentFloat(x) { this._positiveCaseHospitalizedPercentFloat = x; }
+	set infectionDailyIncreasePercentFloat(x) { this._infectionDailyIncreasePercentFloat = (x * 1.0); }
+	set testPercentFloat(x) { this._testPercentFloat = (x * 1.0); }
+	set positiveTestResultPercentFloat(x) { this._positiveTestResultPercentFloat = (x * 1.0); }
+	set positiveCaseDeathPercentFloat(x) { this._positiveCaseDeathPercentFloat = (x * 1.0); }
+	set positiveCaseHospitalizedPercentFloat(x) { this._positiveCaseHospitalizedPercentFloat = (x * 1.0); }
 	set daysHospitalizedInt(x) { this._daysHospitalizedInt = x; }
 	set hospitalBedsInt(x) { this._hospitalBedsInt = x; }
 	set populationInt(x) { this._populationInt = x; }
@@ -58,9 +58,15 @@ class DayStats {
 	*/
 
 	constructor(dayNumberInt, totalInfectionCountSoFarInt, coronaSimSettings) {
+		debug("Creating daystats.", { dayNumberInt:dayNumberInt, totalInfectionCountSoFarInt:totalInfectionCountSoFarInt,
+			coronaSimSettings:coronaSimSettings });
 		this._dayNumberInt = dayNumberInt;
 		this._finalHospitalDayNumberInt = this._dayNumberInt + coronaSimSettings.daysHospitalizedInt;
-		this._infectionsInt = multiplyAndRound(totalInfectionCountSoFarInt, coronaSimSettings.infectionDailyIncreasePercentFloat);
+		if (dayNumberInt == 0) {
+			this._infectionsInt = totalInfectionCountSoFarInt;
+		} else {
+			this._infectionsInt = multiplyAndRound(totalInfectionCountSoFarInt, coronaSimSettings.infectionDailyIncreasePercentFloat);
+		}
 		this._testedInt = multiplyAndRound(this._infectionsInt, coronaSimSettings.testPercentFloat);
 		this._positiveTestsInt = multiplyAndRound(this._testedInt, coronaSimSettings.positiveTestResultPercentFloat);
 		this._hospitalizationsInt = multiplyAndRound(this._positiveTestsInt, coronaSimSettings.positiveCaseHospitalizedPercentFloat);

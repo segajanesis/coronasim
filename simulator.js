@@ -15,13 +15,9 @@ class CoronaSimulator {
 	constructor(coronaSimSettings) {
 		this._coronaSimSettings = coronaSimSettings;	
 		this._currentDayInt = 0;
-		this._currentDayStats = null;
+		this._currentDayStats = new DayStats(this._currentDayInt, coronaSimSettings.initialInfectionsInt, coronaSimSettings);
 		this._dayStatsArray = [];
-		this._initialDeathCount = multiplyAndRound(coronaSimSettings.initialCaseCountInt, coronaSimSettings.percentCasesResultingInDeathInt);
-		this._totalStats = new TotalStats();
-
-		//crate first day
-		this._currentDayStats = new DayStats(0, coronaSimSettings.initialInfectionsInt, coronaSimSettings);
+		this._totalStats = new TotalStats();		
 		this._dayStatsArray.push(this._currentDayStats);
 		this._totalStats.addDayStats(this._currentDayStats);
 
@@ -29,7 +25,7 @@ class CoronaSimulator {
 	}
 
 	moveForwardOneDay() {
-		this._currentDayStats = new DayStats(this._currentDayInt, this._totalStats.totalCasesInt, this._coronaSimSettings);
+		this._currentDayStats = new DayStats(this._currentDayInt, this._totalStats.totalInfectionsInt, this._coronaSimSettings);
 		this._dayStatsArray.push(this._currentDayStats);
 		this._totalStats.addDayStats(this._currentDayStats);
 		this._currentDayInt += 1;
@@ -50,7 +46,7 @@ class CoronaSimulator {
 			message += "\tLatest Day positiveTestsInt: " + dayStats.positiveTestsInt.toLocaleString() + "\n";
 			message += "\tLatest Day hospitalizationsInt: " + dayStats.hospitalizationsInt.toLocaleString() + "\n";
 			message += "\tLatest Day deathsInt: " + dayStats.deathsInt.toLocaleString() + "\n";
-			message += "\tCurrent hospital cases: " + this.hospitalizationsIntForDay(this._currentDayInt).toLocaleString() + "\n";
+			message += "\tCurrent hospital cases: " + this.hospitalizationsForDayInt(this._currentDayInt).toLocaleString() + "\n";
 			debug(message, this);
 		}
 	}	
@@ -63,7 +59,7 @@ class CoronaSimulator {
 	get dayStatsArray() { return this._dayStatsArray; }
 	get totalStats() { return this._totalStats;	}	
 
-	hospitalizationsIntForDay(dayNumberInt) {
+	hospitalizationsForDayInt(dayNumberInt) {
 		var hospitalizationsInt = 0;
 		for (var dayStats of this._dayStatsArray) {
 			if (dayStats.dayNumberInt <= dayNumberInt && dayStats.finalHospitalDayNumberInt >= dayNumberInt) {
