@@ -145,12 +145,11 @@ function populateTemplate(template, dayStats, totalStats, currentHospitalizedInt
 	value = "#" + dayStats.dayNumberInt + ": "  + printDayShort(rowDate);
 	templateCopy = templateCopy.replace("${day}", value);
 
-	percentage = " (" + getPercentage(dayStats.infectionsInt, totalStats.totalInfectionsInt) + "%)";
-	value = "" + printNumberShort(dayStats.infectionsInt) + percentage + " new today.";
+	value = "" + printNumberShort(dayStats.infectionsInt) + " new today.";
 	templateCopy = templateCopy.replace("${infections}", value);
 
-	percentage = " (" + getPercentage(dayStats.testedInt, totalStats.totalTestedInt) + "%)";
-	value = "" + printNumberShort(dayStats.testedInt) + percentage + " new today.";
+	value = "" + printNumberShort(dayStats.testedInt) + " new today, ";
+	value += printNumberShort(dayStats.positiveTestsInt) + " tested positive.";
 	templateCopy = templateCopy.replace("${testResults}", value);
 
 	var bedsUsed = currentHospitalizedInt;
@@ -159,14 +158,17 @@ function populateTemplate(template, dayStats, totalStats, currentHospitalizedInt
 	value = "" + printNumberShort(bedsUsed) + percentage + " used, ";
 	percentage = " (" + getPercentage(bedsFree, coronaSimSettings.hospitalBedsInt) + "%)";
 	value += printNumberShort(bedsFree) + percentage + " free.";
+	if (bedsFree < 0) {
+		value = "<span style='color:red;'>" + value + "</span>";
+	}
 	templateCopy = templateCopy.replace("${hospitalBeds}", value);
 
 	value = "" + printNumberShort(totalStats.totalInfectionsInt) + " infected, ";
+	value += printNumberShort(totalStats.totalTestedInt) + " tested, ";
+	value += printNumberShort(totalStats.totalPositiveTestsInt) + " tested positive, ";	
 	var survivors = totalStats.totalInfectionsInt - totalStats.totalDeathsInt;
-	percentage = " (" + getPercentage(survivors, totalStats.totalInfectionsInt) + "%)";
-	value += printNumberShort(survivors) + percentage + " survivors, ";
-	percentage = " (" + getPercentage(totalStats.totalDeathsInt, totalStats.totalInfectionsInt) + "%)";
-	value += printNumberShort(totalStats.totalDeathsInt) + percentage + " deaths.";
+	value += printNumberShort(survivors) + " survivors, ";
+	value += printNumberShort(totalStats.totalDeathsInt) + " deaths.";
 	templateCopy = templateCopy.replace("${totals}", value);
 
 	return templateCopy;
