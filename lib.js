@@ -158,7 +158,7 @@ function populateTemplate(template, dayStats, totalStats, currentHospitalizedInt
 	value += printNumberShort(dayStats.positiveTestsInt) + " tested positive.";
 	templateCopy = templateCopy.replace("${testResultsToday}", value);
 
-	value = "" + printNumberShort(dayStats.hospitalizationsInt) + " of today's infections will be hospitalized, ";
+	value = "" + printNumberShort(dayStats.hospitalizationsInt) + " of today's infections need to be hospitalized, ";
 	value += printNumberShort(dayStats.deathsInt) + " will die.";
 	templateCopy = templateCopy.replace("${mortalityToday}", value);
 
