@@ -15,6 +15,7 @@
 	<script src="lib.js"></script>
 	<script src="classes.js"></script>
 	<script src="simulator.js"></script>
+	<script src="history.js"></script>
 	
 	<style>
 		* { font-size:3vmin; }
@@ -39,21 +40,13 @@
 	</style>
 
 	<script>	
-		var templateHTML = null;
+		var templateHTML = null;			
 
-		function loadTemplate(docName) {
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					console.log("loaded template: " + docName);
-					templateHTML = this.responseText;
-				}
-			};
-			xhttp.open("GET", docName, true);
-			xhttp.send();
-		}	
+		loadWebResource("results template.html", function(results) {
+			templateHTML = results;
+		});
 
-		loadTemplate("results template.html");
+		var dataManager = new CovidDataManager();
 
 		function runSimulation() {
 			debugMode = true;
@@ -61,6 +54,7 @@
 			if (!el("form").checkValidity()) {
 				return;
 			}
+			
 
 			var coronaSimSettings = new CoronaSimSettings();
 			coronaSimSettings.initialDate = el("initialDate").valueAsDate;
