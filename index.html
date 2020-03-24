@@ -46,9 +46,24 @@
 			templateHTML = results;
 		});
 
-		var dataManager = new CovidDataManager(function() {
-			console.log("US Data API Load complete.");
+		var dataManager = new CovidDataManager(function(dataManager) {
+			var daySelect = document.getElementById('daySelect');
+			for (var item of dataManager.unitedStatesDailyDataArray) {
+				var displayValue = printDayShort(item.date) + " (" + item.testResultsPositiveInt.toLocaleString() + " cases)";
+ 				daySelect.options[daySelect.options.length] = new Option(displayValue, item.id);
+ 			}
 		});
+
+		function updateFromPreset() {
+			var item = null;
+			console.log("Setting presets from record.", item);
+			el("initialInfectionsSlider").value = item.testResultsPositiveInt;
+			el("newInfectionsPercentSlider").value = 
+			el("testPercentSlider").value = 1000;
+			el("positiveTestResultPercentSlider") = 1000;
+			el("caseDeathPercentSlider") = Math.round(item.deathsOfPositivePercentFloat * 100.0);
+			el("caseHospitalizationPercentSlider") = Math.round(item.hospitalizedOfPositivePercentFloat * 100.0);
+		}
 
 		function runSimulation() {
 			debugMode = true;
@@ -129,6 +144,9 @@
 
 			<form class='section' id='form' action="javascript:runSimulation();">
 				<h3>The Simulator</h3>
+				<div class="form-row">
+					<div class="form-group-12"><select class='form-control' id='daySelect'/></div>
+				</div>
 				<div class="form-row mt-3">
 					<div class="form-group col-md-6">
 						<label class="form-label">Initial Date</label>
