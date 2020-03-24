@@ -2,10 +2,11 @@ class CovidDataManager {
 
 	_unitedStatesDailyDataArray = null;
 
-	constructor() {
+	constructor(dataLoadedHandler) {
 		var self = this;
 		loadWebResource("https://covidtracking.com/api/us/daily", function(results) {
 			self.parseData(JSON.parse(results), "usData");
+			dataLoadedHandler();
 		});
 	}
 
@@ -22,7 +23,7 @@ class CovidDataManager {
 			var day = parseInt(d.substr(6,2));			
 			var date = new Date(year, month - 1, day, 0, 0, 0, 0);
 
-			debug("Parsed from api date '" + record.date + " y:" + year + ", m: " + month + ", d: " + day + ", date:" + date);
+			// debug("Parsed from api date '" + record.date + " y:" + year + ", m: " + month + ", d: " + day + ", date:" + date);
 			
 			var recordCopy = new Object();
 			recordCopy.original = record;

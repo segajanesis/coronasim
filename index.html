@@ -46,7 +46,9 @@
 			templateHTML = results;
 		});
 
-		var dataManager = new CovidDataManager();
+		var dataManager = new CovidDataManager(function() {
+			console.log("US Data API Load complete.");
+		});
 
 		function runSimulation() {
 			debugMode = true;
