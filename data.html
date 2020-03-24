@@ -29,7 +29,6 @@
 		IMG { max-width:100%; }
 		.section { margin-bottom:1rem; border-top:1px solid rgba(0,0,0,0.15); padding-top:1rem; }
 		.form-group { margin-top:1rem; margin-bottom:3rem; }
-		.form-group LABEL { margin-bottom:2rem; }	
 		.simulationOutput .form-group { margin:0; margin-bottom:0.5rem; }
 		.simulationOutput .form-group LABEL { margin-bottom:0; }
 		LABEL.form-label { font-weight:700; }
@@ -59,7 +58,7 @@
 			return value;
 		}
 
-		function createTable(dataManager) {
+		function createTable(data) {
 			var tc = new TableCreator();
 			tc.cssClass = "table table-striped";
 
@@ -70,7 +69,6 @@
 			tc.addTableHeader("Hospitalized", "hospitalized");
 			tc.addTableHeader("Deaths", "deaths");
 
-			var data = dataManager.unitedStatesDailyDataArray;
 			var tableDataArray = [];
 			for (var i = data.length - 1; i >= 0; i--) {
 				var apiRecord = data[i];
@@ -84,11 +82,11 @@
 				apiRecord.bedCount = 1 * million;
 
 				d.totalTested = createTableValue(apiRecord, "testResultsTotalInt");
-				d.totalTested += addComparisonValue(apiRecord, "testResultsTotalInt", "population", "of population");
+				d.totalTested += addComparisonValue(apiRecord, "testResultsTotalInt", "population", "of U.S population");
 
 				d.positiveResults = createTableValue(apiRecord, "testResultsPositiveInt");
 				d.positiveResults += addComparisonValue(apiRecord, "testResultsPositiveInt", "testResultsTotalInt", "of total");
-				d.positiveResults += addComparisonValue(apiRecord, "testResultsPositiveInt", "population", "of population");
+				d.positiveResults += addComparisonValue(apiRecord, "testResultsPositiveInt", "population", "of U.S. population");
 
 				d.negativeResults = createTableValue(apiRecord, "testResultsNegativeInt");
 				d.negativeResults += addComparisonValue(apiRecord, "testResultsNegativeInt", "testResultsTotalInt", "of total");
@@ -105,64 +103,39 @@
 			}
 			tc.addData(tableDataArray);
 
-/*
-
-			recordCopy.testResultsPositiveInt = record.positive;
-			recordCopy.testResultsNegativeInt = record.negative;
-			recordCopy.testResultsTotalInt = record.positive + record.negative;			
-			recordCopy.hospitalizedInt = this.denull(record.hospitalized);
-			recordCopy.deathsInt = this.denull(record.death);			
-
-			recordCopy.testResultsPositivePercentFloat = getPercentageFloat(recordCopy.testResultsPositiveInt, recordCopy.testResultsTotalInt);
-			recordCopy.testResultsNegativePercentFloat = getPercentageFloat(recordCopy.testResultsNegativeInt, recordCopy.testResultsTotalInt);
-			recordCopy.hospitalizedOfTotalPercentFloat = getPercentageFloat(recordCopy.hospitalizedInt, recordCopy.testResultsTotalInt);
-			recordCopy.hospitalizedOfPositivePercentFloat = getPercentageFloat(recordCopy.hospitalizedInt, recordCopy.testResultsPositiveInt);
-			recordCopy.deathsOfTotalPercentFloat = getPercentageFloat(recordCopy.deathsInt, recordCopy.testResultsTotalInt);
-			recordCopy.deathsOfPositivePercentFloat = getPercentageFloat(recordCopy.deathsInt, recordCopy.testResultsPositiveInt);
-
-			var newStats = new Object();
-			newStats.testResultsPositiveInt = lastRecordCopy == null ? recordCopy.testResultsPositiveInt
-				: recordCopy.testResultsPositiveInt - lastRecordCopy.testResultsPositiveInt;
-
-			newStats.testResultsNegativeInt = lastRecordCopy == null ? recordCopy.testResultsNegativeInt
-				: recordCopy.testResultsNegativeInt - lastRecordCopy.testResultsNegativeInt;
-
-			newStats.testResultsTotalInt = lastRecordCopy == null ? recordCopy.testResultsTotalInt
-				: recordCopy.testResultsTotalInt - lastRecordCopy.testResultsTotalInt; 
-
-			newStats.hospitalizedInt = lastRecordCopy == null ? recordCopy.hospitalizedInt
-				: recordCopy.hospitalizedInt - lastRecordCopy.hospitalizedInt; 
-
-			newStats.deathsInt = lastRecordCopy == null ? recordCopy.deathsInt
-				: recordCopy.deathsInt - lastRecordCopy.deathsInt; 
-
-			newStats.testResultsPositivePercentFloat = getPercentageFloat(newStats.testResultsPositiveInt, newStats.testResultsTotalInt);
-			newStats.testResultsNegativePercentFloat = getPercentageFloat(newStats.testResultsNegativeInt, newStats.testResultsTotalInt);
-			newStats.hospitalizedOfTotalPercentFloat = getPercentageFloat(newStats.hospitalizedInt, newStats.testResultsTotalInt);
-			newStats.hospitalizedOfPositivePercentFloat = getPercentageFloat(newStats.hospitalizedInt, newStats.testResultsPositiveInt);
-			newStats.deathsOfTotalPercentFloat = getPercentageFloat(newStats.deathsInt, newStats.testResultsTotalInt);
-			newStats.deathsOfPositivePercentFloat = getPercentageFloat(newStats.deathsInt, newStats.testResultsPositiveInt);
-
-			newStats.testResultsPositiveGrowthPercentFloat = getPercentageFloat(newStats.testResultsPositiveInt, recordCopy.testResultsPositiveInt);
-			newStats.testResultsNegativeGrowthPercentFloat = getPercentageFloat(newStats.testResultsNegativeInt, recordCopy.testResultsNegativeInt);
-			newStats.testResultsTotalGrowthPercentFloat = getPercentageFloat(newStats.testResultsTotalInt, recordCopy.testResultsTotalInt);
-			newStats.hospitalizedGrowthPercentFloat = getPercentageFloat(newStats.hospitalizedInt, recordCopy.hospitalizedInt);
-			newStats.deathGrowthPercentFloat = getPercentageFloat(newStats.deathsInt, recordCopy.deathsInt);
-*/
-
-
 			el("simulationOutput").innerHTML = tc.createTable();
 		}		
 
 		document.addEventListener('DOMContentLoaded', function() {	
-			debug("Document loaded, loading data.");
+			debug("Document loaded, loading data.");		
 			var handler = function(dataManager) {
 				debug("Remote data loaded. Creating table.");
-				createTable(dataManager);
+				createTable(dataManager.unitedStatesDailyDataArray);
 				debug("Finished creating table.");
 			};
 			dataManager = new CovidDataManager(handler);
+
+			//load up our selector
+			el("modeSelector").options[el("modeSelector").options.length] = new Option("United States (All)", "United States (All)");
+			for (var stateName of dataManager.stateNames) {
+ 				el("modeSelector").options[el("modeSelector").options.length] = new Option(stateName, stateName);
+ 			}
+
 		}, false);
+
+		function changeTableForSelectedState() {
+			var selectedValue = el("modeSelector").value;
+			console.log("Showing data for: " + selectedValue);
+			var data = dataManager.unitedStatesDailyDataArray;
+			if (selectedValue != "United States (All)") {
+				data = dataManager.stateDailyDataArray(selectedValue);
+				if (data == null) {
+					console.log("Error: can't find data for state: " + selectedValue);
+					return;
+				}	
+			}
+			createTable(data);
+		}
 	</script>
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
@@ -179,9 +152,19 @@
 		<h1>Coronavirus Stats</h1>
 
 		<div class='section'>
-			<p>This is a dynamic simulator built to help citizens understand hospital resource exhaustion. It illustrates that we must take quarantine seriously or our negligence will result in people dying due to a lack of hospital resources.</p>
+			<p>A summary of data pulled from <a href="https://covidtracking.com/data/">The Covid Tracking Project</a> with some interesting statistics.</p>
+
+			<p><strong>Note:</strong> Best viewed in landscape mode on a smartphone.</p>
 		
 			<p><strong>Note:</strong> This is a beta version. All of the code is on <a href="https://github.com/codercowboy/coronasim">github</a>. Code review me, PLEASE! If you find a bug, please <a href="mailto:jason@onejasonforsale.com">email me</a>!</p>
+		</div>
+
+		<div class='form-row'>
+			<div class='form-group col-md-4'></div>
+			<div class='form-group col-md-4'>
+				<label class='form-label'>Showing Data For</label>
+				<select class='form-control' id='modeSelector' onChange='changeTableForSelectedState()'></select>
+			</div>
 		</div>
 
 		<div class='simulationOutput pt-3' id='simulationOutput'>

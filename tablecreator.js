@@ -71,14 +71,16 @@ class TableHeader {
 	set columnFormat(x) { return this._columnFormat = x; }
 }
 
-class TableCreator {
-
-	_cssClass = null;
-	_headerHTML = "";
-	_dataHTML = "";
-	_tableHeaders = [];
+class TableCreator {	
 	
+	constructor() {
+		this._headerHTML = "";
+		this._dataHTML = "";
+		this._tableHeaders = [];
+	}
+
 	createTable() {
+
 		var html = "";
 		html += "<table id='theTable' class='" + this._cssClass + "'><thead>\n";
 		//add headers

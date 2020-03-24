@@ -1,3 +1,5 @@
+'use strict';
+
 var debugMode = true;
 
 var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
@@ -213,7 +215,7 @@ function generateSimulationOutput(template, coronaSimSettings) {
 		totalStats: simulator.totalStats.copy(),
 		currentHospitalizedInt: simulator.hospitalizationsForDayInt(simulator.currentDayInt),
 	});
-	for (i = 0; i < coronaSimSettings.simulatonDaysInt; i++) {
+	for (var i = 0; i < coronaSimSettings.simulatonDaysInt; i++) {
 		simulator.moveForwardOneDay();				
 		tableDataArray.push({
 			dayStats: simulator.currentDayStats,
