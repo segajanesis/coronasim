@@ -5,12 +5,14 @@ class CovidDataManager {
 	constructor() {
 		var self = this;
 		loadWebResource("https://covidtracking.com/api/us/daily", function(results) {
-			self.parseData(JSON.parse(results));
+			self.parseData(JSON.parse(results), "usData");
 		});
 	}
 
-	parseData(results) {
+	parseData(results, dataDesc) {
 		var recordArray = [];
+		var idCounter = 0;
+
 		for (var record of results) {
 			// original record from api: {"date":20200323,"states":56,"positive":42164,"negative":237321,"posNeg":279485,"pending":14571,"hospitalized":3325,"death":471,"total":294056}
 
@@ -25,6 +27,8 @@ class CovidDataManager {
 			var recordCopy = new Object();
 			recordCopy.original = record;
 			recordCopy.date = date;
+			recordCopy.id = dataDesc + "-" + idCounter;
+			recordCopy.index = idCounter;
 			recordCopy.apiDate = record.date;
 			recordCopy.testResultsPositiveInt = record.positive;
 			recordCopy.testResultsNegativeInt = record.negative;
@@ -38,6 +42,8 @@ class CovidDataManager {
 			recordCopy.deathsOfTotalPercentFloat = getPercentageFloat(recordCopy.deathsInt, recordCopy.testResultsTotalInt);
 			recordCopy.deathsOfPositivePercentFloat = getPercentageFloat(recordCopy.deathsInt, recordCopy.testResultsPositiveInt);
 			recordArray.push(recordCopy);
+
+			idCounter += 1;
 		}
 		this.unitedStatesDailyDataArray = recordArray;
 		console.log("data converted from api.", this.unitedStatesDailyDataArray);
