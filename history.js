@@ -53,6 +53,24 @@ class CovidDataManager {
 		return x == null ? 0 : x;
 	}
 
+	getUnitedStatesDataForIndex(index) {
+		for (var item of this.unitedStatesDailyDataArray) {
+			if (item.index == index) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	getUnitedStatesDataForId(id) {
+		for (var item of this.unitedStatesDailyDataArray) {
+			if (item.id == id) {
+				return item;
+			}
+		}
+		return null;
+	}
+
 	get unitedStatesDailyDataArray() { return this._unitedStatesDailyDataArray; }
 	set unitedStatesDailyDataArray(x) { this._unitedStatesDailyDataArray = x; }
 }
