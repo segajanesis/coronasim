@@ -4,7 +4,7 @@ A simulator illustrating hospital resource exhaustion due to the Coronavirus COV
 
 ### Demo
 
-The simulator is running [here](http://www.codercowboy.com/coronasim/). Althought, it's not really "running", as it's just static html + js that runs in your browser, anyway - there it is.
+The simulator is running [here](http://www.codercowboy.com/coronasim/). Although, it's not really "running", as it's just static html + js that runs in your browser, anyway - there it is.
 
 ### Tech Stack
 
