@@ -116,7 +116,7 @@
 <body>
 	<div class='content'>
 		<div class="jumbotron">
-			<h1>Coronavirus Simulator</h1>
+			<h1>Coronavirus Resource Exhaustion Simulator</h1>
 
 			<div class='section'>
 				<h3>What?</h3>
@@ -127,7 +127,7 @@
 
 				<p>The current death rate from the virus appears to be 12% if you look at <a href="https://coronavirus.jhu.edu/map.html">current survival to death ratio</a>. 12% of two million patients with corona dying would be 240,000 deaths. BUT, if one million patients needing ventilators can't get into overcrowded hospitals, we might have 500,000 additional deaths or maybe even all 1,000,000, and as the simulator shows - it gets worse from there.</p>
 
-				<p>However, if we simply adjust our per-day infection growth rate down to 10% from the current trend of 33%+, we buy ourselves time. At a 10% growth rate, our hospital beds would not be exhausted until 3 months from now. If we <a href="https://www.npr.org/sections/health-shots/2020/03/17/817251610/its-time-to-get-serious-about-social-distancing-here-s-how">socially distance</a> ourselves, we will reduce the number of new cases and buy ourselves time.</p>
+				<p>However, if we simply adjust our per-day infection growth rate down to 10% from the current trend of 24%+, we buy ourselves time. At a 10% growth rate, our hospital beds would not be exhausted until 3 months from now. If we <a href="https://www.npr.org/sections/health-shots/2020/03/17/817251610/its-time-to-get-serious-about-social-distancing-here-s-how">socially distance</a> ourselves, we will reduce the number of new cases and buy ourselves time.</p>
 
 				<p><strong>We MUST take quarantine seriously.</strong> Now is not the time to refute the news and discard this as 'just the flu'. It is not the common flu. Coronavirus has a death rate <a href="https://www.livescience.com/new-coronavirus-compare-with-flu.html">at least ten times higher than the common flu</a>, and, if we can't <a href="https://www.nytimes.com/2020/03/11/science/coronavirus-curve-mitigation-infection.html">flatten the curve</a> and control the number of people needing hospitalization, many people will die who don't need to.</p>
 
@@ -137,7 +137,7 @@
 
 				<p>The default settings in the simulator are very crudely estimated right now, but that will be improved (with sources provided) soon.</p>
 
-				<p>For now, by default, we assume <a href="https://www.cdc.gov/nchs/data/hus/2017/089.pdf">1 million beds are available (per the CDC)</a> in United States hospitals right now. Other settings are currently configured for a very loose interpretation of today's (March 22) <a href="https://coronavirus.jhu.edu/map.html">stats</a> in the united states: about 33,000 confirmed cases, up 33% (~8,000) from yesterday; a death rate of about <a href="https://coronavirus.jhu.edu/map.html">12%</a>, a (conservative?) estimate of 10% of confirmed cases resulting in hospitalization, and a very conservative estimate of hospitalizations lasting for 3 days.</p>
+				<p>For now, by default, we assume <a href="https://www.cdc.gov/nchs/data/hus/2017/089.pdf">1 million beds are available (per the CDC)</a> in United States hospitals right now. Other settings are currently configured for a very loose interpretation of today's (March 24) <a href="https://coronavirus.jhu.edu/map.html">stats</a> in the united states: about 42,164 confirmed cases, up 24.4% (~ 10,000) from yesterday; a death rate of about <a href="https://coronavirus.jhu.edu/map.html">12%</a>, an estimate of 7.8% of confirmed cases resulting in hospitalization, and a very conservative estimate of hospitalizations lasting for 3 days.</p>
 
 				<p>To clarify, using the tool, we are estimating that 10% of infections are being tested by default and 100% of those cases are resulting in hospitalization, which effectively is equivalent to 10% of the infections resulting in hospitalization.</p>
 
@@ -162,10 +162,10 @@
 				<div class="form-row">
 					<div class="form-group col-md-8">
 						<label class="form-label">Initial Infections</label>
-						<input class="form-control-range" id="initialInfectionsSlider" type="range" min="10" max="999" value="33" scaleControl="initialInfectionsScale" />
+						<input class="form-control-range" id="initialInfectionsSlider" type="range" min="10" max="999" value="42" scaleControl="initialInfectionsScale" />
 					</div>
 					<div class="form-group col-md-4">
-						<label class="form-label">Scale</label>
+						<label class="form-label">Initial Infections Scale</label>
 						<select class='form-control' id="initialInfectionsScale" onchange="updateSliderLabel(el('initialInfectionsSlider'));">
 							<option>Exact</option>
 							<option selected="selected">Thousand</option>
@@ -176,28 +176,28 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-12">
-						<label class="form-label">Infection Rate Per Day</label>
-						<input class="form-control-range" id="newInfectionsPercentSlider" type="range" min="1" max="1000" value="330" format="percentage" />
+						<label class="form-label">Infection Spread Rate Per Day</label>
+						<input class="form-control-range" id="newInfectionsPercentSlider" type="range" min="1" max="1000" value="244" format="percentage" />
 					</div>					
 				</div>
-				<div class="form-row">
+				<div class="form-row" style='display:none'>
 					<div class="form-group col-md-6">
-						<label class="form-label">New Infections Tested</label>
-						<input class="form-control-range" id="testPercentSlider" type="range" min="1" max="1000" value="100" format="percentage" />
+						<label class="form-label">New Infections Tested Per Day</label>
+						<input class="form-control-range" id="testPercentSlider" type="range" min="1" max="1000" value="1000" format="percentage" />
 					</div>
 					<div class="form-group col-md-6">
 						<label class="form-label">Positive Test Result Rate</label>
-						<input class="form-control-range" id="positiveTestResultPercentSlider" type="range" min="1" max="1000" value="900" format="percentage" />
+						<input class="form-control-range" id="positiveTestResultPercentSlider" type="range" min="1" max="1000" value="1000" format="percentage" />
 					</div>					
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-6">
-						<label class="form-label">Positive Test Cases Resulting In Death</label>
+						<label class="form-label">Infections Resulting In Death</label>
 						<input class="form-control-range" id="caseDeathPercentSlider" type="range" min="1" max="1000" value="120" format="percentage" />
 					</div>					
 					<div class="form-group col-md-6">
-						<label class="form-label">Positive Test Cases Resulting In Hospitalization</label>
-						<input class="form-control-range" id="caseHospitalizationPercentSlider" type="range" min="1" max="1000" value="1000" format="percentage" />
+						<label class="form-label">Infection Resulting In Hospitalization</label>
+						<input class="form-control-range" id="caseHospitalizationPercentSlider" type="range" min="1" max="1000" value="79" format="percentage" />
 					</div>
 				</div>
 				<div class="form-row">
@@ -223,7 +223,7 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-8">
-						<label class="form-label">Population Cap</label>
+						<label class="form-label">Population</label>
 						<input class="form-control-range" id="populationCapSlider" type="range" min="1" max="999" value="330" scaleControl="populationCapScale" />
 					</div>
 					<div class="form-group col-md-4">
